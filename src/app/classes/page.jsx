@@ -1,11 +1,16 @@
 import React from 'react';
 
-const page = () => {
+const ClassesPage = () => {
     return (
-        <div>
-            Coming
+        <div className="min-h-screen bg-[#020617] text-white pt-32 flex flex-col items-center justify-center">
+            <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#06B6D4] to-[#3B82F6] mb-6">
+                All Classes
+            </h1>
+            <p className="text-xl text-slate-400 font-medium tracking-widest uppercase">
+                Coming Soon
+            </p>
         </div>
     );
 };
 
-export default page;
+export default ClassesPage;
