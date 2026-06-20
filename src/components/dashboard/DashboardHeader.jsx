@@ -4,12 +4,14 @@ import React from "react";
 import { Menu, ArrowLeft } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import DashboardSidebar from "./DashboardSidebar";
+import SidebarSkeleton from "./SidebarSkeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function DashboardHeader({
   role,
   user,
+  isPending,
   onMenuClick,
   isMobileOpen,
   setIsMobileOpen,
@@ -47,14 +49,14 @@ export default function DashboardHeader({
           </div>
         </div>
 
-        {/* Right Side: Actions */}
         <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/"
-            className="hidden md:flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors mr-2 border border-cyan-400/20 px-3 py-1.5 rounded-full hover:bg-cyan-400/10"
+            className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors mr-2 border border-cyan-400/20 px-3 py-1.5 rounded-full hover:bg-cyan-400/10"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back To Website
+            <span className="hidden sm:inline">Back To Website</span>
+            <span className="inline sm:hidden">Back To Website</span>
           </Link>
         </div>
       </header>
@@ -66,11 +68,15 @@ export default function DashboardHeader({
           className="p-0 bg-[#0b1120] border-r-white/5 w-72 text-white"
         >
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-          <DashboardSidebar
-            role={role}
-            user={user}
-            onClickItem={() => setIsMobileOpen(false)}
-          />
+          {isPending ? (
+            <SidebarSkeleton />
+          ) : (
+            <DashboardSidebar
+              role={role}
+              user={user}
+              onClickItem={() => setIsMobileOpen(false)}
+            />
+          )}
         </SheetContent>
       </Sheet>
     </>
