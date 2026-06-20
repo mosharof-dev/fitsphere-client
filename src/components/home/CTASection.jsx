@@ -25,14 +25,14 @@ export default function CTASection() {
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeUp}
-          className="max-w-5xl mx-auto bg-white/5 border border-white/10 backdrop-blur-3xl rounded-[3rem] p-12 md:p-24 shadow-[0_30px_80px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden"
+          className="max-w-5xl mx-auto bg-white/5 border border-white/10 backdrop-blur-3xl rounded-[2rem] md:rounded-[3rem] p-6 sm:p-12 md:p-24 shadow-[0_30px_80px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden"
         >
           {/* Inner Highlight */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-linear-to-b from-[#06B6D4]/30 to-transparent blur-3xl pointer-events-none"></div>
 
           <motion.h2
             variants={fadeUp}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]"
+            className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 md:mb-8 leading-[1.2] md:leading-[1.1]"
           >
             Ready To Start Your <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-[#06B6D4] to-[#3B82F6]">
@@ -42,7 +42,7 @@ export default function CTASection() {
 
           <motion.p
             variants={fadeUp}
-            className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-12 leading-relaxed font-medium"
+            className="text-lg sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-10 md:mb-12 leading-relaxed font-medium"
           >
             Join thousands of members already transforming their lives with
             FitSphere. Whether you&apos;re here to learn, train, or teach.
@@ -54,16 +54,16 @@ export default function CTASection() {
           >
             <Link
               href="/classes"
-              className="w-full sm:w-auto group relative flex items-center justify-center px-12 py-5 bg-linear-to-r from-[#06B6D4] to-[#3B82F6] rounded-2xl font-bold text-white shadow-[0_10px_30px_rgba(6,182,212,0.4)] hover:shadow-[0_15px_40px_rgba(6,182,212,0.6)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 text-xl"
+              className="w-full sm:w-auto group relative flex items-center justify-center px-8 py-4 md:px-12 md:py-5 bg-linear-to-r from-[#06B6D4] to-[#3B82F6] rounded-2xl font-bold text-white shadow-[0_10px_30px_rgba(6,182,212,0.4)] hover:shadow-[0_15px_40px_rgba(6,182,212,0.6)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 text-lg md:text-xl"
             >
               Explore Classes
-              <FiArrowRight className="ml-3 text-2xl group-hover:translate-x-2 transition-transform" />
+              <FiArrowRight className="ml-2 md:ml-3 text-xl md:text-2xl group-hover:translate-x-2 transition-transform" />
             </Link>
             <Link
-              href="/register?type=trainer"
-              className="w-full sm:w-auto group flex items-center justify-center px-12 py-5 bg-white/5 border border-white/20 hover:border-white/40 hover:bg-white/10 backdrop-blur-md rounded-2xl font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 text-xl shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
+              href="/register"
+              className="w-full sm:w-auto group flex items-center justify-center px-8 py-4 md:px-12 md:py-5 bg-white/5 border border-white/20 hover:border-white/40 hover:bg-white/10 backdrop-blur-md rounded-2xl font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 text-lg md:text-xl shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
             >
-              Become A Trainer
+              Get Started Now
             </Link>
           </motion.div>
         </motion.div>
