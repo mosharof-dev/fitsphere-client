@@ -1,11 +1,5 @@
-import React from 'react';
+import { redirect } from "next/navigation";
 
-const TrainerDashboard = () => {
-    return (
-        <div>
-            Content Coming Soon Trainer
-        </div>
-    );
-};
-
-export default TrainerDashboard;
+export default function TrainerDashboard() {
+  redirect("/dashboard/trainer/overview");
+}

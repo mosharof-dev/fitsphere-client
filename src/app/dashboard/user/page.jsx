@@ -1,11 +1,5 @@
+import { redirect } from "next/navigation";
 
-
-const UserDashboard = () => {
-    return (
-        <div>
-            Content Coming Soon user
-        </div>
-    );
-};
-
-export default UserDashboard;
+export default function UserDashboard() {
+  redirect("/dashboard/user/overview");
+}
