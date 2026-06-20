@@ -14,6 +14,7 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
+import { uploadToImgBB } from "@/lib/actions/image-upload";
 
 const SignUp = () => {
   const router = useRouter();
@@ -32,32 +33,6 @@ const SignUp = () => {
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
-    }
-  };
-
-  const uploadToImgBB = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
-
-    try {
-      const response = await fetch(
-        `https://api.imgbb.com/1/upload?key=${apiKey}`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-      const data = await response.json();
-      if (data.success) {
-        return data.data.url;
-      } else {
-        throw new Error("ImgBB upload failed");
-      }
-    } catch (error) {
-      console.error("Image upload error:", error);
-      return null;
     }
   };
 
@@ -91,7 +66,6 @@ const SignUp = () => {
       email: email,
       password: password,
       image: imageUrl,
-      role: "user",
       callbackURL: "/login",
     });
 
