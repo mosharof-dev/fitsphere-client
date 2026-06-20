@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/shared/NavBar";
 import Footer from "@/components/shared/Footer";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,13 +25,50 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-       data-theme="light"
+      data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NavBar />
         <main className="pt-16 grow">{children}</main>
         <Footer />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: "#071028",
+              color: "#fff",
+              border: "1px solid rgba(34,211,238,0.3)",
+              borderRadius: "14px",
+              padding: "16px",
+              boxShadow:
+                "0 0 20px rgba(34,211,238,0.15), 0 10px 30px rgba(0,0,0,0.4)",
+            },
+
+            success: {
+              iconTheme: {
+                primary: "#06b6d4",
+                secondary: "#fff",
+              },
+              style: {
+                background: "#071028",
+                border: "1px solid #06b6d4",
+              },
+            },
+
+            error: {
+              iconTheme: {
+                primary: "#ef4444",
+                secondary: "#fff",
+              },
+              style: {
+                background: "#071028",
+                border: "1px solid #ef4444",
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );
