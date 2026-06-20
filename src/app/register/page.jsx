@@ -1,17 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import {
-  Button,
-  FieldError,
-  Form,
-  Input,
-  InputGroup,
-  Label,
-  TextField,
-} from "@heroui/react";
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
 import { BiUser, BiEnvelope, BiLockAlt, BiImageAdd } from "react-icons/bi";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
@@ -20,223 +10,259 @@ import { toast } from "sonner";
 
 const SignUp = () => {
   const router = useRouter();
-  
+
+  // Form State
   const [isVisible, setIsVisible] = useState(false);
+  const [password, setPassword] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Password Validation Rules
+  const isLengthValid = password.length >= 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const uploadToImgBB = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    // Replace with your actual ImgBB API key in .env.local
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+
+    try {
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${apiKey}`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+      const data = await response.json();
+      if (data.success) {
+        return data.data.url;
+      } else {
+        throw new Error("ImgBB upload failed");
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      return null;
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const user = Object.fromEntries(formData.entries());
+    setIsLoading(true);
 
+    const formData = new FormData(e.currentTarget);
+    const fullName = formData.get("fullName");
+    const email = formData.get("email");
+
+    // 1. Check strict password validation before proceeding
+    if (!isLengthValid || !hasUppercase || !hasNumber) {
+      toast.error("Please meet all password requirements.");
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. Upload image to ImgBB first (if selected)
+    let imageUrl = "";
+    if (imageFile) {
+      const uploadedUrl = await uploadToImgBB(imageFile);
+      if (!uploadedUrl) {
+        toast.error("Failed to upload profile image.");
+        setIsLoading(false);
+        return;
+      }
+      imageUrl = uploadedUrl;
+    }
+
+    // 3. Register user with Better Auth using the returned ImgBB URL
     const { data, error } = await authClient.signUp.email({
-      name: user.fullName,
-      image: user.photoURL,
-      email: user.email,
-      password: user.password,
-      role: user.role,
+      name: fullName,
+      email: email,
+      password: password,
+      image: imageUrl, // Storing only the URL
+      role: "user",
       callbackURL: "/login",
     });
+
     if (error) {
       toast.error(
         `Registration Failed: ${error.message || "Something went wrong!"}`,
       );
-      console.log("Error details:", error);
-      return;
-    }
-    if (data) {
+    } else if (data) {
       toast.success("Registration Successful! 🎉 Please login to continue.");
-      await authClient.signOut();
-
-      // 4. Redirect to login page
+      await authClient.signOut(); // Clear session if auto-logged in
       router.push("/login");
     }
 
-    console.log(data, error);
+    setIsLoading(false);
   };
 
   const signinWithGoogle = async () => {
     await authClient.signIn.social({
       provider: "google",
-      // idToken: { token: idToken, accessToken },
     });
   };
 
+  // Shared input styling to guarantee exact dimensions and look
+  const inputContainerClass =
+    "flex items-center w-full h-[56px] px-4 rounded-xl border border-cyan-500/20 bg-transparent focus-within:border-cyan-500 transition-colors";
+  const inputClass =
+    "w-full bg-transparent text-sm text-white placeholder-slate-500 outline-none ml-3";
+
   return (
-    <div className="flex py-8 w-full items-center justify-center bg-gray-50 p-4 font-sans">
-      <div className="w-full max-w-md">
-        {/* Header section */}
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-normal tracking-tight text-gray-900">
-            Create Account
-          </h1>
-          <p className="mt-2 text-sm text-gray-500">
-            Start your adventure with Wanderlust
-          </p>
-        </div>
+    <div className="flex  w-full bg-[#020617] font-sans text-white">
+      <div className="flex w-full lg:w-[55%] flex-col items-center justify-center p-6 sm:p-12">
+        <div className="w-full max-w-md rounded-3xl border border-cyan-500/20 bg-[#071028] p-8 shadow-[0_0_40px_rgba(6,182,212,0.08)]">
+          {/* Header section */}
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-white mb-2">
+              Create Account
+            </h2>
+            <p className="text-slate-400">Start your fitness journey today.</p>
+          </div>
 
-        {/* Form Card */}
-        <div className="rounded-md border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-          <Form className="flex flex-col gap-5" onSubmit={onSubmit}>
+          {/* Form */}
+          <form className="flex flex-col gap-5" onSubmit={onSubmit}>
             {/* Full Name */}
-            <TextField
-              isRequired
-              name="fullName"
-              validate={(value) => {
-                if (value.length < 3) {
-                  return "Name must be at least 3 characters";
-                }
-                return null;
-              }}
-            >
-              <Label className="mb-1 text-sm font-medium text-gray-900">
-                Full Name
-              </Label>
-              <InputGroup className="rounded-md bg-gray-50/50">
-                <InputGroup.Prefix className="pl-3">
-                  <BiUser className="size-5 text-gray-400" />
-                </InputGroup.Prefix>
-                <InputGroup.Input
-                  placeholder="Enter your name"
-                  className="bg-transparent py-2.5 text-sm"
-                />
-              </InputGroup>
-              <FieldError />
-            </TextField>
-
-            {/* Photo URL Field */}
-            <TextField
-              isRequired
-              name="photoURL"
-              type="file"
-              
-            >
-              <Label className="mb-1 text-sm font-medium text-gray-900">
-                Photo URL
-              </Label>
-              <InputGroup className="rounded-md bg-gray-50/50">
-                <InputGroup.Prefix className="pl-3">
-                  <BiImageAdd className="size-5 text-gray-400" />
-                </InputGroup.Prefix>
-                <InputGroup.Input
-                  placeholder="Choose your profile image"
-                  className="bg-transparent py-2.5 text-sm"
-                />
-              </InputGroup>
-              <FieldError />
-            </TextField>
+            <div className={inputContainerClass}>
+              <BiUser className="text-xl text-cyan-500/70" />
+              <input
+                required
+                name="fullName"
+                type="text"
+                placeholder="Full Name"
+                className={inputClass}
+              />
+            </div>
 
             {/* Email Address */}
-            <TextField
-              isRequired
-              name="email"
-              type="email"
-              validate={(value) => {
-                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                  return "Please enter a valid email address";
-                }
-                return null;
-              }}
+            <div className={inputContainerClass}>
+              <BiEnvelope className="text-xl text-cyan-500/70" />
+              <input
+                required
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                className={inputClass}
+              />
+            </div>
+
+            {/* Profile Image (Hidden File Input) */}
+            <label
+              className={`${inputContainerClass} cursor-pointer hover:border-cyan-500/50`}
             >
-              <Label className="mb-1 text-sm font-medium text-gray-900">
-                Email Address
-              </Label>
-              <InputGroup className="rounded-md bg-gray-50/50">
-                <InputGroup.Prefix className="pl-3">
-                  <BiEnvelope className="size-5 text-gray-400" />
-                </InputGroup.Prefix>
-                <InputGroup.Input
-                  placeholder="Enter your email"
-                  className="bg-transparent py-2.5 text-sm"
-                />
-              </InputGroup>
-              <FieldError />
-            </TextField>
+              <BiImageAdd className="text-xl text-cyan-500/70" />
+              <span
+                className={`ml-3 text-sm ${imageFile ? "text-white" : "text-slate-500"}`}
+              >
+                {imageFile ? imageFile.name : "Choose Profile Image"}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </label>
 
             {/* Password */}
-            <TextField
-              className="w-full "
-              isRequired
-              name="password"
-              onChange={(value) => setPassword(value)}
-              type="password"
-              validate={(value) => {
-                if (value.length < 8) {
-                  return "Password must be at least 8 characters";
-                }
-                if (!/[A-Z]/.test(value)) {
-                  return "Password must contain at least one uppercase letter";
-                }
-                if (!/[0-9]/.test(value)) {
-                  return "Password must contain at least one number";
-                }
-                return null;
-              }}
-            >
-              <Label>Password</Label>
-              <InputGroup className="rounded-md bg-gray-50/50">
-                <InputGroup.Prefix className="pl-3">
-                  <BiLockAlt className="size-5 text-gray-400" />
-                </InputGroup.Prefix>
-                <InputGroup.Input
-                  placeholder="Create a password"
-                  className="bg-transparent py-2.5 text-sm"
+            <div className="relative flex flex-col">
+              <div className={inputContainerClass}>
+                <BiLockAlt className="text-xl text-cyan-500/70" />
+                <input
+                  required
+                  name="password"
                   type={isVisible ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={inputClass}
                 />
-                <InputGroup.Suffix className="pr-0">
-                  <Button
-                    isIconOnly
-                    aria-label={isVisible ? "Hide password" : "Show password"}
-                    size="sm"
-                    variant="ghost"
-                    onPress={() => setIsVisible(!isVisible)}
+                <button
+                  type="button"
+                  onClick={() => setIsVisible(!isVisible)}
+                  className="p-2 text-slate-400 hover:text-white transition-colors"
+                >
+                  {isVisible ? (
+                    <BsEye className="text-lg" />
+                  ) : (
+                    <BsEyeSlash className="text-lg" />
+                  )}
+                </button>
+              </div>
+
+              {/* Live Password Rules (Only shows when typing) */}
+              {password.length > 0 && (
+                <div className="mt-3 flex flex-col gap-1.5 pl-1 text-xs">
+                  <span
+                    className={
+                      isLengthValid ? "text-green-400" : "text-slate-400"
+                    }
                   >
-                    {isVisible ? (
-                      <BsEye className="size-4" />
-                    ) : (
-                      <BsEyeSlash className="size-4" />
-                    )}
-                  </Button>
-                </InputGroup.Suffix>
-              </InputGroup>
-              <FieldError />
-            </TextField>
+                    {isLengthValid ? "✓" : "✖"} At least 8 characters
+                  </span>
+                  <span
+                    className={
+                      hasUppercase ? "text-green-400" : "text-slate-400"
+                    }
+                  >
+                    {hasUppercase ? "✓" : "✖"} At least one uppercase letter
+                  </span>
+                  <span
+                    className={hasNumber ? "text-green-400" : "text-slate-400"}
+                  >
+                    {hasNumber ? "✓" : "✖"} At least one number
+                  </span>
+                </div>
+              )}
+            </div>
 
             {/* Submit Button */}
-            <Button
+            <button
               type="submit"
-              className="mt-2 w-full rounded-md bg-[#13a5c0] py-3 text-sm font-medium text-white transition-colors hover:bg-[#108fa6]"
+              disabled={isLoading}
+              className="mt-2 h-[56px] w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
             >
-              Create Account
-            </Button>
-          </Form>
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </button>
+          </form>
 
           {/* Divider */}
-          <div className="relative my-6">
+          <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-cyan-500/20"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-gray-400">
+              <span className="bg-[#071028] px-4 text-slate-400">
                 Or sign up with
               </span>
             </div>
           </div>
 
-          {/* Social Sign Up */}
-          <Button
+          {/* Google Button */}
+          <button
             onClick={signinWithGoogle}
-            variant="outline"
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            type="button"
+            className="flex h-[56px] w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-transparent text-sm font-medium text-white transition-all hover:bg-white/5"
           >
-            <FcGoogle className="size-5" />
+            <FcGoogle className="text-2xl" />
             Sign Up With Google
-          </Button>
+          </button>
 
           {/* Footer Link */}
-          <p className="mt-8 text-center text-sm text-gray-500">
+          <p className="mt-8 text-center text-sm text-slate-400">
             Already have an account?{" "}
             <a
               href="/login"
-              className="font-semibold text-[#13a5c0] hover:underline"
+              className="font-semibold text-cyan-400 transition-colors hover:text-cyan-300 hover:underline"
             >
               Sign In
             </a>
