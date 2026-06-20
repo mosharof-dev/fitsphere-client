@@ -286,85 +286,58 @@ export default function HeroSection() {
 
               {/* Floating Stat 1: 10K+ Active Members */}
               <motion.div
-                className="absolute left-[4%] top-[40%] z-50
+                className="absolute -left-10 lg:-left-16 top-[38%] z-50
                   bg-[#0f172a]/80 backdrop-blur-xl
                   border border-white/20 rounded-2xl px-5 py-4
                   shadow-[0_15px_35px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.2)]
                   flex items-center space-x-4 min-w-42.5"
                 animate={{ y: [-8, 8, -8] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5,
-                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               >
                 <div className="w-10 h-10 rounded-xl bg-[#06B6D4]/20 flex items-center justify-center border border-[#06B6D4]/40 shrink-0 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
                   <FaUsers className="text-[#06B6D4] text-base" />
                 </div>
                 <div>
-                  <p className="text-base font-extrabold text-white leading-tight">
-                    10K+
-                  </p>
-                  <p className="text-xs text-slate-300 leading-tight mt-0.5">
-                    Active Members
-                  </p>
+                  <p className="text-base font-extrabold text-white leading-tight">10K+</p>
+                  <p className="text-xs text-slate-300 leading-tight mt-0.5">Active Members</p>
                 </div>
               </motion.div>
 
               {/* Floating Stat 2: 250+ Certified Trainers */}
               <motion.div
-                className="absolute right-[2%] top-[15%] z-50
+                className="absolute -right-6 lg:-right-12 top-[12%] z-50
                   bg-[#0f172a]/80 backdrop-blur-xl
                   border border-white/20 rounded-2xl px-5 py-4
                   shadow-[0_15px_35px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.2)]
                   flex items-center space-x-4 min-w-45"
                 animate={{ y: [8, -8, 8] }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1.5,
-                }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
               >
                 <div className="w-10 h-10 rounded-xl bg-[#3B82F6]/20 flex items-center justify-center border border-[#3B82F6]/40 shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
                   <FaUserTie className="text-[#3B82F6] text-base" />
                 </div>
                 <div>
-                  <p className="text-base font-extrabold text-white leading-tight">
-                    250+
-                  </p>
-                  <p className="text-xs text-slate-300 leading-tight mt-0.5">
-                    Certified Trainers
-                  </p>
+                  <p className="text-base font-extrabold text-white leading-tight">250+</p>
+                  <p className="text-xs text-slate-300 leading-tight mt-0.5">Certified Trainers</p>
                 </div>
               </motion.div>
 
               {/* Floating Stat 3: 50K+ Bookings */}
               <motion.div
-                className="absolute left-[45%] -translate-x-1/2 bottom-[4%] z-50
+                className="absolute left-[50%] -translate-x-1/2 -bottom-8 lg:-bottom-12 z-50
                   bg-[#0f172a]/80 backdrop-blur-xl
                   border border-white/20 rounded-2xl px-5 py-4
                   shadow-[0_15px_35px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.2)]
                   flex items-center space-x-4 min-w-47.5"
                 animate={{ y: [-6, 6, -6] }}
-                transition={{
-                  duration: 4.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 2.5,
-                }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
               >
                 <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center border border-green-500/40 shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
                   <FiCheckCircle className="text-green-400 text-base" />
                 </div>
                 <div>
-                  <p className="text-base font-extrabold text-white leading-tight">
-                    50K+
-                  </p>
-                  <p className="text-xs text-slate-300 leading-tight mt-0.5">
-                    Successful Bookings
-                  </p>
+                  <p className="text-base font-extrabold text-white leading-tight">50K+</p>
+                  <p className="text-xs text-slate-300 leading-tight mt-0.5">Successful Bookings</p>
                 </div>
               </motion.div>
             </div>
