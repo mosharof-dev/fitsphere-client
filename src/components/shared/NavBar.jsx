@@ -16,7 +16,7 @@ const NavBar = () => {
 
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-[#020617] backdrop-blur-md shadow-sm transition-all duration-300">
+      <header className="fixed top-0 w-full z-50 bg-[#020617] backdrop-blur-md shadow-sm transition-all duration-300 border-b-2 border-cyan-400/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left: Logo & Brand */}
