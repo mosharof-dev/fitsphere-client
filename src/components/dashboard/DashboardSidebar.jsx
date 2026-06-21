@@ -70,7 +70,7 @@ export default function DashboardSidebar({ role = "user", user, onClickItem }) {
   return (
     <div className="flex h-full flex-col bg-[#0b1120]">
       {/* Logo Area */}
-      <div className="flex h-[72px] items-center px-6 border-b border-white/5 shrink-0">
+      <div className="flex h-18 items-center px-6 border-b border-white/5 shrink-0">
         <Link href="/" className="flex items-center gap-2 group transition-opacity hover:opacity-80">
           <div className="flex items-center justify-center transition-transform duration-300 group-hover:rotate-180">
             <svg

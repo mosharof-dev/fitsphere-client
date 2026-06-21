@@ -8,7 +8,7 @@ export default function SidebarSkeleton() {
   return (
     <div className="flex h-full flex-col bg-[#0b1120]">
       {/* Logo Area Skeleton */}
-      <div className="flex h-[72px] items-center px-6 border-b border-white/5 shrink-0">
+      <div className="flex h-18 items-center px-6 border-b border-white/5 shrink-0">
         <div className="flex items-center gap-2">
           <Skeleton className="w-8 h-8 rounded-full bg-slate-800" />
           <Skeleton className="w-24 h-6 rounded-md bg-slate-800" />
@@ -40,7 +40,7 @@ export default function SidebarSkeleton() {
 
       {/* Logout Button Skeleton */}
       <div className="p-4 border-t border-white/5 shrink-0 bg-[#020617]/50">
-        <Skeleton className="h-[46px] w-full rounded-xl bg-slate-800" />
+        <Skeleton className="h-11.5 w-full rounded-xl bg-slate-800" />
       </div>
     </div>
   );

@@ -18,9 +18,13 @@ export default function RoleBadge({ role, className }) {
   };
 
   return (
-    <Badge 
-      variant="outline" 
-      className={cn("uppercase text-[10px] px-2.5 py-0.5 tracking-widest font-bold shadow-sm", roleStyles[role] || roleStyles.user, className)}
+    <Badge
+      variant="outline"
+      className={cn(
+        "uppercase text-[10px] px-2.5 py-0.5 tracking-widest font-bold shadow-sm",
+        roleStyles[role] || roleStyles.user,
+        className,
+      )}
     >
       {labels[role] || "User"}
     </Badge>

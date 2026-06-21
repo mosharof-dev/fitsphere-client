@@ -26,7 +26,7 @@ export default function DashboardHeader({
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-[72px] shrink-0 items-center justify-between border-b border-white/5 bg-[#020617]/80 backdrop-blur-md px-4 sm:px-6">
+      <header className="sticky top-0 z-30 flex h-18 shrink-0 items-center justify-between border-b border-white/5 bg-[#020617]/80 backdrop-blur-md px-4 sm:px-6">
         {/* Left Side: Mobile Menu & Dynamic Title */}
         <div className="flex items-center gap-4">
           <Button
