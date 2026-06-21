@@ -18,7 +18,7 @@ export default function PageContainer({
   action,
 }) {
   return (
-    <div className="flex flex-col gap-6 w-full pb-10">
+    <div className="flex flex-col  w-full">
       {/* Header section with Breadcrumbs */}
       <div className="flex flex-col gap-3">
         {breadcrumbs.length > 0 && (
@@ -66,7 +66,7 @@ export default function PageContainer({
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 w-full mt-2">{children}</div>
+      <div className="flex-1 w-full ">{children}</div>
     </div>
   );
 }

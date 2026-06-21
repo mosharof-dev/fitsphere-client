@@ -26,8 +26,9 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Password Validation Rules
-  const isLengthValid = password.length >= 8;
+  const isLengthValid = password.length >= 6;
   const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
 
   const handleImageChange = (e) => {
@@ -44,7 +45,7 @@ const SignUp = () => {
     const fullName = formData.get("fullName");
     const email = formData.get("email");
 
-    if (!isLengthValid || !hasUppercase || !hasNumber) {
+    if (!isLengthValid || !hasUppercase || !hasNumber || !hasLowercase) {
       toast.error("Please meet all password requirements.");
       setIsLoading(false);
       return;
@@ -321,7 +322,7 @@ const SignUp = () => {
                               : "text-slate-400"
                           }
                         >
-                          At least 8 characters
+                          At least 6 characters
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5 text-[12px]">
@@ -338,6 +339,22 @@ const SignUp = () => {
                           }
                         >
                           At least one uppercase letter
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-[12px]">
+                        {hasLowercase ? (
+                          <BsCheckCircleFill className="text-green-400 text-sm shrink-0" />
+                        ) : (
+                          <BsXCircleFill className="text-slate-500 text-sm shrink-0" />
+                        )}
+                        <span
+                          className={
+                            hasLowercase
+                              ? "text-green-400 font-medium"
+                              : "text-slate-400"
+                          }
+                        >
+                          At least one lowercase letter
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5 text-[12px]">
