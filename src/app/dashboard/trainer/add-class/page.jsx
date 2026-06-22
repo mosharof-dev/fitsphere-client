@@ -2,7 +2,7 @@
 
 import PageContainer from "@/components/dashboard/PageContainer";
 import { uploadToImgBB } from "@/lib/actions/image-upload";
-import { Plus, Clock } from "lucide-react";
+import { Plus, Clock, CheckCircle2 } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 
@@ -26,7 +26,7 @@ export default function AddClassPage() {
       difficulty: "Beginner",
       category: "Yoga",
       duration: "",
-      time: "",
+      time: "09:00 AM",
       days: new Set(),
     },
   });
@@ -59,7 +59,7 @@ export default function AddClassPage() {
 
       console.log("Uploading image...");
       const uploadedUrl = await uploadToImgBB(imageFile);
-      
+
       if (!uploadedUrl) {
         alert("Failed to upload image. Please try again.");
         setIsSubmitting(false);
@@ -73,7 +73,7 @@ export default function AddClassPage() {
 
       console.log("Final Payload ready for API:", finalPayload);
       alert("Class added successfully! Check console for details.");
-      
+
       reset();
       setImageFile(null);
     } catch (error) {
@@ -84,26 +84,37 @@ export default function AddClassPage() {
     }
   };
 
-  const labelClass = "block text-[11px] font-bold text-slate-400 tracking-wider mb-2 uppercase";
-  const inputClass = "w-full h-[46px] px-4 rounded-xl border border-slate-700/50 bg-[#0f172a]/50 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#b4fc2c] focus:ring-1 focus:ring-[#b4fc2c] transition-all";
+  const labelClass =
+    "block text-[11px] font-bold text-slate-400 tracking-wider mb-2 uppercase";
+  const inputClass =
+    "w-full h-[46px] px-4 rounded-xl border border-white/10 bg-[#020617]/50 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#b4fc2c] focus:ring-1 focus:ring-[#b4fc2c] transition-all";
 
   return (
     <PageContainer>
-      <div className="w-full max-w-5xl mx-auto py-6">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-[#b4fc2c]/10 flex items-center justify-center border border-[#b4fc2c]/20">
-            <Plus className="w-5 h-5 text-[#b4fc2c]" />
+      <div className="w-full  mx-auto py-6">
+        {/* Header Section with Meaningful Text */}
+        <div className="flex flex-col gap-2 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#b4fc2c]/10 flex items-center justify-center border border-[#b4fc2c]/20">
+              <Plus className="w-5 h-5 text-[#b4fc2c]" />
+            </div>
+            <h1 className="text-2xl font-bold text-white tracking-wide">
+              Add New Class
+            </h1>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">
-            Add New Class
-          </h1>
+          <p className="text-slate-400 text-[14px] leading-relaxed max-w-2xl ml-13">
+            Set up your new fitness class by providing the details below. Ensure
+            the class name, description, and pricing are clear to help your
+            students understand what you offer.
+          </p>
         </div>
 
         {/* Form Container */}
-        <div className="bg-[#1e293b]/30 border border-slate-700/40 rounded-3xl p-8 shadow-2xl backdrop-blur-sm">
-          <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-            
+        <div className="bg-[#071028] border border-white/5 rounded-[24px] p-6 sm:p-8 shadow-2xl">
+          <form
+            className="flex flex-col gap-6"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             {/* Class Name */}
             <div>
               <label className={labelClass}>Class Name</label>
@@ -111,20 +122,43 @@ export default function AddClassPage() {
                 type="text"
                 placeholder="e.g. Power Yoga Flow"
                 className={inputClass}
-                {...register("class_name", { required: "Class Name is required" })}
+                {...register("class_name", {
+                  required: "Class Name is required",
+                })}
               />
-              {errors.class_name && <span className="text-red-400 text-xs mt-1 block">{errors.class_name.message}</span>}
+              {errors.class_name && (
+                <span className="text-red-400 text-xs mt-1 block">
+                  {errors.class_name.message}
+                </span>
+              )}
             </div>
 
             {/* Class Image */}
             <div>
               <label className={labelClass}>Class Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full h-[46px] px-4 py-2.5 rounded-xl border border-slate-700/50 bg-[#0f172a]/50 text-sm text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-300 hover:file:bg-slate-700 transition-all focus:outline-none focus:border-[#b4fc2c]"
-              />
+              <label
+                className={`${inputClass} cursor-pointer flex items-center justify-between group overflow-hidden`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="bg-white/10 border border-white/5 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold group-hover:bg-white/20 transition-colors">
+                    Choose File
+                  </span>
+                  <span
+                    className={`text-sm truncate ${imageFile ? "text-white" : "text-slate-500"}`}
+                  >
+                    {imageFile ? imageFile.name : "No file chosen"}
+                  </span>
+                </div>
+                {imageFile && (
+                  <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
             </div>
 
             {/* Category & Difficulty */}
@@ -134,13 +168,17 @@ export default function AddClassPage() {
                 <div className="relative">
                   <select
                     className={`${inputClass} appearance-none pr-10 cursor-pointer`}
-                    {...register("category", { required: "Category is required" })}
+                    {...register("category", {
+                      required: "Category is required",
+                    })}
                   >
                     <option value="Yoga">Yoga</option>
                     <option value="Zumba">Zumba</option>
                     <option value="Cardio">Cardio</option>
                     <option value="Strength Training">Strength Training</option>
-                    <option value="Functional Training">Functional Training</option>
+                    <option value="Functional Training">
+                      Functional Training
+                    </option>
                     <option value="Weight Loss">Weight Loss</option>
                     <option value="CrossFit">CrossFit</option>
                     <option value="Bodybuilding">Bodybuilding</option>
@@ -148,7 +186,9 @@ export default function AddClassPage() {
                     <option value="HIIT">HIIT</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -158,14 +198,18 @@ export default function AddClassPage() {
                 <div className="relative">
                   <select
                     className={`${inputClass} appearance-none pr-10 cursor-pointer`}
-                    {...register("difficulty", { required: "Difficulty is required" })}
+                    {...register("difficulty", {
+                      required: "Difficulty is required",
+                    })}
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Advanced">Advanced</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -175,13 +219,33 @@ export default function AddClassPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className={labelClass}>Duration</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 60 mins"
-                  className={inputClass}
-                  {...register("duration", { required: "Duration is required" })}
-                />
-                {errors.duration && <span className="text-red-400 text-xs mt-1 block">{errors.duration.message}</span>}
+                <div className="relative">
+                  <select
+                    className={`${inputClass} appearance-none pr-10 cursor-pointer`}
+                    {...register("duration", {
+                      required: "Duration is required",
+                    })}
+                  >
+                    <option value="" disabled>
+                      Select duration
+                    </option>
+                    <option value="30 Minutes">30 Minutes</option>
+                    <option value="45 Minutes">45 Minutes</option>
+                    <option value="60 Minutes">60 Minutes</option>
+                    <option value="90 Minutes">90 Minutes</option>
+                    <option value="120 Minutes">120 Minutes</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
+                  </div>
+                </div>
+                {errors.duration && (
+                  <span className="text-red-400 text-xs mt-1 block">
+                    {errors.duration.message}
+                  </span>
+                )}
               </div>
 
               <div>
@@ -193,7 +257,11 @@ export default function AddClassPage() {
                   className={inputClass}
                   {...register("price", { required: "Price is required" })}
                 />
-                {errors.price && <span className="text-red-400 text-xs mt-1 block">{errors.price.message}</span>}
+                {errors.price && (
+                  <span className="text-red-400 text-xs mt-1 block">
+                    {errors.price.message}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -222,8 +290,8 @@ export default function AddClassPage() {
                           }}
                           className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
                             isSelected
-                              ? "bg-slate-700/80 text-white border-slate-500 shadow-inner"
-                              : "bg-[#0f172a]/50 text-slate-400 border-slate-700/50 hover:bg-slate-800"
+                              ? "bg-white/10 text-white border-white/20 shadow-inner"
+                              : "bg-transparent text-slate-400 border-white/5 hover:bg-white/5"
                           }`}
                         >
                           {day}
@@ -240,8 +308,7 @@ export default function AddClassPage() {
               <label className={labelClass}>Time</label>
               <div className="relative">
                 <input
-                  type="text"
-                  placeholder="08:00 AM"
+                  type="time"
                   className={`${inputClass} pr-10`}
                   {...register("time", { required: "Time is required" })}
                 />
@@ -249,7 +316,11 @@ export default function AddClassPage() {
                   <Clock className="w-4 h-4" />
                 </div>
               </div>
-              {errors.time && <span className="text-red-400 text-xs mt-1 block">{errors.time.message}</span>}
+              {errors.time && (
+                <span className="text-red-400 text-xs mt-1 block">
+                  {errors.time.message}
+                </span>
+              )}
             </div>
 
             {/* Description */}
@@ -259,9 +330,15 @@ export default function AddClassPage() {
                 placeholder="Describe the class..."
                 rows={4}
                 className={`${inputClass} h-auto py-3 resize-y`}
-                {...register("description", { required: "Description is required" })}
+                {...register("description", {
+                  required: "Description is required",
+                })}
               />
-              {errors.description && <span className="text-red-400 text-xs mt-1 block">{errors.description.message}</span>}
+              {errors.description && (
+                <span className="text-red-400 text-xs mt-1 block">
+                  {errors.description.message}
+                </span>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -269,17 +346,15 @@ export default function AddClassPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#b4fc2c] hover:bg-[#a3e622] text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-[#b4fc2c] hover:bg-[#a3e622] text-black font-bold px-6 py-3 rounded-xl flex items-center justify-center sm:justify-start w-full sm:w-auto gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <Plus className="w-5 h-5" />
-                {isSubmitting ? "Adding..." : "Add Class"}
+                {isSubmitting ? "Adding Class..." : "Add Class"}
               </button>
             </div>
-
           </form>
         </div>
       </div>
     </PageContainer>
   );
 }
-
