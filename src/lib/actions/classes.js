@@ -8,7 +8,7 @@ export const createNewClass = async (newClass) => {
 
   const payload = {
     ...newClass,
-    trainerEmail: trainer?.user?.email,
+    trainerEmail: trainer?.email,
   };
 
   try {
