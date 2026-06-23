@@ -45,7 +45,7 @@ const ClassesPage = async ({ searchParams }) => {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-12 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto space-y-12 px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
@@ -96,7 +96,11 @@ const ClassesPage = async ({ searchParams }) => {
         {/* Pagination */}
         {!error && totalPages > 1 && (
           <Suspense fallback={null}>
-            <Pagination totalPages={totalPages} currentPage={Number(currentPage)} totalItems={totalItems} />
+            <Pagination
+              totalPages={totalPages}
+              currentPage={Number(currentPage)}
+              totalItems={totalItems}
+            />
           </Suspense>
         )}
       </div>

@@ -1,4 +1,4 @@
-import { Clock, Users, ArrowRight } from "lucide-react";
+import { Clock, Users, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -74,7 +74,7 @@ export default function ClassCard({ classItem }) {
             {description}
           </p>
 
-          <div className="flex items-center gap-5 text-sm text-slate-400 pt-2">
+          <div className="flex items-center gap-5 text-sm text-slate-400 pt-2 border-b border-slate-800/50 pb-3">
             <div className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-[#3B82F6]" />
               <span>{duration}</span>
@@ -84,36 +84,30 @@ export default function ClassCard({ classItem }) {
               <span>{bookingCount} Booked</span>
             </div>
           </div>
+          
+          <div className="text-sm text-slate-400 pt-3 flex justify-between items-center">
+            <div className="flex items-center gap-1.5">
+              <User className="w-4 h-4 text-[#3B82F6]" />
+              <span className="font-medium text-slate-300">Trainer:</span>
+              <span className="truncate max-w-[100px] sm:max-w-[120px]">{trainerName}</span>
+            </div>
+            
+            <div className="flex items-center font-bold">
+              <span className="text-sm font-medium mr-1 text-slate-400">Price:</span>
+              <span className="text-[#06B6D4] text-sm mr-0.5">$</span>
+              <span className="text-[#06B6D4] text-lg leading-none">{price}</span>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-slate-800/80 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-slate-700">
-              <Image 
-                src={trainerImage || "/placeholder-avatar.png"} 
-                alt={trainerName}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <span className="text-sm font-medium text-slate-300 truncate max-w-[100px]">{trainerName}</span>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            {/* Price Badge */}
-            <div className="flex items-center justify-center px-3 py-1.5 rounded-lg bg-[#06B6D4]/10 text-[#06B6D4] font-bold border border-[#06B6D4]/20">
-              <span className="text-sm font-medium mr-0.5">$</span>
-              <span className="text-base leading-none">{price}</span>
-            </div>
-
-            {/* Details Button */}
-            <Link 
-              href={`/classes/${_id}`}
-              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-slate-800 text-slate-200 hover:bg-[#3B82F6] hover:text-white transition-colors border border-slate-700 hover:border-[#3B82F6]"
-            >
-              Details
-            </Link>
-          </div>
+        <div className="mt-4 pt-4 border-t border-slate-800/80">
+          <Link 
+            href={`/classes/${_id}`}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl bg-gradient-to-r from-[#3B82F6]/10 to-[#06B6D4]/10 text-[#06B6D4] border border-[#06B6D4]/20 hover:bg-gradient-to-r hover:from-[#3B82F6] hover:to-[#06B6D4] hover:text-white transition-all duration-300 shadow-lg hover:shadow-[#06B6D4]/25 group/btn"
+          >
+            View Full Details
+            <ArrowRight className="w-4 h-4 text-[#06B6D4] group-hover/btn:text-white transition-colors" />
+          </Link>
         </div>
       </div>
     </div>
