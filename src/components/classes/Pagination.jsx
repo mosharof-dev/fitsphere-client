@@ -37,17 +37,18 @@ export default function Pagination({ totalPages, currentPage, totalItems = 120 }
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <HeroUIPagination page={currentPage} className="w-full flex justify-center mt-10" classNames={{
-      wrapper: "gap-2",
-      item: "bg-transparent text-white hover:bg-white/10",
-      cursor: "bg-white/20 text-white font-bold",
-      prev: "bg-transparent text-white hover:bg-white/10",
-      next: "bg-transparent text-white hover:bg-white/10",
-    }}>
-      <HeroUIPagination.Summary className="text-slate-400">
-        Showing {startItem}-{endItem} of {totalItems} results
-      </HeroUIPagination.Summary>
-      <HeroUIPagination.Content>
+    <div className="w-full mt-12 pt-8 border-t border-slate-800/80">
+      <HeroUIPagination page={currentPage} className="w-full flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0" classNames={{
+        wrapper: "gap-2",
+        item: "bg-transparent text-white hover:bg-white/10",
+        cursor: "bg-white/20 text-white font-bold",
+        prev: "bg-transparent text-white hover:bg-white/10",
+        next: "bg-transparent text-white hover:bg-white/10",
+      }}>
+        <HeroUIPagination.Summary className="text-slate-400">
+          Showing {startItem}-{endItem} of {totalItems} results
+        </HeroUIPagination.Summary>
+        <HeroUIPagination.Content>
         <HeroUIPagination.Item>
           <HeroUIPagination.Previous isDisabled={currentPage === 1} onPress={() => handlePageChange(currentPage - 1)}>
             <HeroUIPagination.PreviousIcon />
@@ -73,7 +74,8 @@ export default function Pagination({ totalPages, currentPage, totalItems = 120 }
             <HeroUIPagination.NextIcon />
           </HeroUIPagination.Next>
         </HeroUIPagination.Item>
-      </HeroUIPagination.Content>
-    </HeroUIPagination>
+        </HeroUIPagination.Content>
+      </HeroUIPagination>
+    </div>
   );
 }

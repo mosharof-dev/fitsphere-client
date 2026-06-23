@@ -8,32 +8,37 @@ export default function SearchFilter() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
-  const initialSearch = searchParams.get("search") || "";
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
 
-  // Sync state if URL changes externally
-  useEffect(() => {
-    setSearchTerm(searchParams.get("search") || "");
-  }, [searchParams]);
+  const searchParamValue = searchParams.get("search") || "";
+  const [searchTerm, setSearchTerm] = useState(searchParamValue);
+  const [prevSearchParam, setPrevSearchParam] = useState(searchParamValue);
+
+  // Sync state if URL changes externally (e.g. back button) without useEffect
+  if (searchParamValue !== prevSearchParam) {
+    setSearchTerm(searchParamValue);
+    setPrevSearchParam(searchParamValue);
+  }
 
   // Debounced search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
+      const currentSearch = searchParams.get("search") || "";
+      if (searchTerm === currentSearch) return;
+
       const current = new URLSearchParams(Array.from(searchParams.entries()));
-      
+
       if (searchTerm) {
         current.set("search", searchTerm);
       } else {
         current.delete("search");
       }
-      
+
       // Reset to page 1 on new search
       current.set("page", "1");
-      
+
       const search = current.toString();
       const query = search ? `?${search}` : "";
-      
+
       router.push(`${pathname}${query}`, { scroll: false });
     }, 500);
 
