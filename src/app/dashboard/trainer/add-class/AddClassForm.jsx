@@ -8,6 +8,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import { MdOutlineAddToQueue } from "react-icons/md";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -19,7 +20,7 @@ const breadcrumbs = [
 export default function AddClassForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -85,9 +86,8 @@ export default function AddClassForm() {
       const res = await createNewClass(finalPayload);
 
       if (res) {
-        toast.success("Class added successfully!");
-        reset();
-        setImageFile(null);
+        toast.success(" Your class has been added successfully!");
+        router.push("/dashboard/trainer/my-classes");
       }
     } catch (error) {
       console.error("Error submitting form:", error);

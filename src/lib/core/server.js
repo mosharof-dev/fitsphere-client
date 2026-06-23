@@ -3,11 +3,7 @@ const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 //  generic server fetch function for fetching data
 export const serverFetch = async (path) => {
   try {
-    const res = await fetch(`${API_URL}${path}`, {
-      headers: {
-        "x-api-secret": process.env.API_SECRET_KEY,
-      },
-    });
+    const res = await fetch(`${API_URL}${path}`);
     return handleStatus(res);
   } catch (error) {
     console.error("Error fetching data:", error);
