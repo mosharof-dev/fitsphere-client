@@ -22,3 +22,13 @@ export const getClassesId = async (id) => {
     throw error;
   }
 };
+
+export const getTrainerMyClasses = async (trainerId) => {
+  try {
+    const response = serverFetch(`/api/classes/my-classes/${trainerId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching trainer's classes:", error);
+    throw error;
+  }
+};
