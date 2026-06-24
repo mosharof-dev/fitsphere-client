@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Calendar, Clock, Timer, Award, Heart } from "lucide-react";
+import FavoriteButton from "./FavoriteButton";
 
 export default function ClassSidebar({ singleClass }) {
   return (
@@ -82,10 +83,7 @@ export default function ClassSidebar({ singleClass }) {
           <button className="w-full py-4 px-6 bg-gradient-to-r from-[#06B6D4] to-[#3B82F6] rounded-xl font-bold text-white text-lg shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
             Enroll Now
           </button>
-          <button className="w-full flex items-center justify-center gap-3 py-4 px-6 bg-white/5 border border-white/10 hover:border-[#ef4444]/50 hover:bg-[#ef4444]/10 rounded-xl font-semibold text-white transition-all duration-300 hover:text-[#ef4444] group">
-            <Heart className="w-5 h-5 group-hover:fill-[#ef4444] transition-colors" />
-            Add to Favorite
-          </button>
+          <FavoriteButton classData={singleClass} />
         </div>
       </div>
     </div>

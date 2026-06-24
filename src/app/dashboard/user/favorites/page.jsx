@@ -1,19 +1,19 @@
 import PageContainer from "@/components/dashboard/PageContainer";
-import ComingSoon from "@/components/dashboard/ComingSoon";
+import FavoritesList from "@/components/dashboard/favorites/FavoritesList";
 
 export default function FavoritesPage() {
   const breadcrumbs = [
     { label: "Dashboard", href: "/dashboard/user/overview" },
-    { label: "Favorite Classes" }
+    { label: "Favorite Classes" },
   ];
 
   return (
-    <PageContainer 
-      title="Favorite Classes" 
-      description="Your saved and favorite fitness classes."
+    <PageContainer
+      title="Favorite Classes"
+      description="Your saved and favorite classes and instructors list."
       breadcrumbs={breadcrumbs}
     >
-      <ComingSoon />
+      <FavoritesList />
     </PageContainer>
   );
 }
