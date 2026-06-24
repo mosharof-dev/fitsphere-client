@@ -48,3 +48,17 @@ export const deleteClass = async (id, deleteData) => {
     throw error;
   }
 };
+
+export const updateClassStatus = async (id, status) => {
+  try {
+    const response = await serverMutation(
+      `/api/classes/status/${id}`,
+      { status },
+      "PATCH",
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating class status:", error);
+    throw error;
+  }
+};

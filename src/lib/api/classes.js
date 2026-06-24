@@ -13,6 +13,19 @@ export const getAllClasses = (queryParams = "") => {
   }
 };
 
+export const getAllAdminClasses = (queryParams = "") => {
+  try {
+    const endpoint = queryParams
+      ? `/api/classes/all-classes?${queryParams}`
+      : "/api/classes/all-classes";
+    const response = serverFetch(endpoint);
+    return response;
+  } catch (error) {
+    console.error("Error fetching all admin classes:", error);
+    throw error;
+  }
+};
+
 export const getClassesId = async (id) => {
   try {
     const response = serverFetch(`/api/classes/${id}`);
