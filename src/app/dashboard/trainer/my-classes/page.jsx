@@ -15,8 +15,9 @@ import {
   Plus,
   MapPin,
 } from "lucide-react";
+import { DeleteClassButton } from "./DeleteClassButton";
 
-export default async function MyClassesPage() {
+export default async function MyClassesPage({ searchParams }) {
   const breadcrumbs = [
     { label: "Dashboard", href: "/dashboard/trainer/overview" },
     { label: "My Classes" },
@@ -27,6 +28,19 @@ export default async function MyClassesPage() {
   });
 
   const myClasses = await getTrainerMyClasses(session?.user?.id);
+
+  // Pagination Logic
+  const params = await searchParams;
+  const page = params?.page || "1";
+  const currentPage = Number(page);
+  const itemsPerPage = 6;
+  const totalClasses = myClasses?.length || 0;
+  const totalPages = Math.ceil(totalClasses / itemsPerPage);
+  const paginatedClasses =
+    myClasses?.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage,
+    ) || [];
 
   return (
     <PageContainer breadcrumbs={breadcrumbs}>
@@ -45,9 +59,9 @@ export default async function MyClassesPage() {
         </Link>
       </div>
 
-      {myClasses && myClasses.length > 0 ? (
+      {totalClasses > 0 ? (
         <div className="flex flex-col gap-6">
-          {myClasses.map((classItem) => (
+          {paginatedClasses.map((classItem) => (
             <div
               key={classItem._id}
               className="bg-[#0B1120]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] hover:border-cyan-500/30 transition-all duration-500 group flex flex-col md:flex-row"
@@ -142,7 +156,7 @@ export default async function MyClassesPage() {
 
                   <div className="flex flex-wrap sm:flex-nowrap gap-3 w-full sm:w-auto">
                     <Link
-                      href={`/dashboard/trainer/my-classes/${classItem._id}`}
+                      href={`/classes/${classItem._id}`}
                       className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 text-gray-300 hover:bg-cyan-500 hover:text-black transition-all duration-300 font-semibold text-sm border border-transparent hover:border-cyan-400"
                     >
                       <Eye className="w-4 h-4" />
@@ -155,10 +169,9 @@ export default async function MyClassesPage() {
                       <Edit className="w-4 h-4" />
                       <span>Edit</span>
                     </Link>
-                    <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 text-gray-300 hover:bg-rose-500 hover:text-white transition-all duration-300 font-semibold text-sm border border-transparent hover:border-rose-400">
-                      <Trash2 className="w-4 h-4" />
-                      <span>Delete</span>
-                    </button>
+                    <DeleteClassButton
+                      classId={classItem._id.toString()}
+                    />{" "}
                   </div>
                 </div>
               </div>
