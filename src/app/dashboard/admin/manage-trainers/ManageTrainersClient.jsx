@@ -1,0 +1,284 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Ban,
+  CheckCircle,
+  Search,
+  User,
+  Mail,
+  Activity,
+  Dumbbell,
+  ArrowDownCircle
+} from "lucide-react";
+import { toast } from "sonner";
+import { updateUserRole, updateUserStatus } from "@/lib/actions/users";
+import { format } from "date-fns";
+import Image from "next/image";
+
+export default function ManageTrainersClient({ initialTrainers }) {
+  const [trainers, setTrainers] = useState(initialTrainers);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isUpdating, setIsUpdating] = useState(null);
+
+  // Filter trainers based on search query
+  const filteredTrainers = trainers.filter(
+    (trainer) =>
+      trainer.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      trainer.email?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  const handleDemoteToUser = async (userId) => {
+    try {
+      setIsUpdating(userId);
+      await updateUserRole(userId, "user");
+      // Remove from list since they are no longer a trainer
+      setTrainers(trainers.filter((t) => t.id !== userId));
+      toast.success("Trainer demoted to User successfully");
+    } catch (error) {
+      toast.error("Failed to demote trainer");
+      console.error(error);
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
+  const handleToggleBlock = async (userId, currentStatus) => {
+    try {
+      setIsUpdating(userId);
+      const newStatus = currentStatus === "blocked" ? "active" : "blocked";
+      await updateUserStatus(userId, newStatus);
+      setTrainers(
+        trainers.map((t) => (t.id === userId ? { ...t, status: newStatus } : t)),
+      );
+      toast.success(
+        `Trainer ${newStatus === "blocked" ? "blocked" : "unblocked"} successfully`,
+      );
+    } catch (error) {
+      toast.error("Failed to update trainer status");
+      console.error(error);
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6 mt-4">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-[#1E293B]/40 border border-white/5 rounded-2xl p-6 flex flex-col justify-center backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+              <Dumbbell className="w-6 h-6 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-400 font-medium mb-1">
+                Total Trainers
+              </p>
+              <h3 className="text-2xl font-bold text-white">{trainers.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#1E293B]/40 border border-white/5 rounded-2xl p-6 flex flex-col justify-center backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+              <Activity className="w-6 h-6 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-400 font-medium mb-1">
+                Active Trainers
+              </p>
+              <h3 className="text-2xl font-bold text-white">
+                {trainers.filter((t) => t.status !== "blocked").length}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#1E293B]/40 border border-white/5 rounded-2xl p-6 flex flex-col justify-center backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
+              <Ban className="w-6 h-6 text-red-400" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-400 font-medium mb-1">
+                Blocked Trainers
+              </p>
+              <h3 className="text-2xl font-bold text-white">
+                {trainers.filter((t) => t.status === "blocked").length}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Top Controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="relative w-full sm:max-w-xs group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-slate-400 group-focus-within:text-[#06B6D4] transition-colors" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2.5 bg-[#1E293B]/50 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#06B6D4]/50 focus:ring-1 focus:ring-[#06B6D4]/50 transition-all backdrop-blur-sm"
+            placeholder="Search by name or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Trainers Table */}
+      <div className="bg-[#1E293B]/30 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-slate-400 uppercase bg-black/20">
+              <tr>
+                <th className="px-6 py-4 font-semibold tracking-wider">Trainer</th>
+                <th className="px-6 py-4 font-semibold tracking-wider">Role</th>
+                <th className="px-6 py-4 font-semibold tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 font-semibold tracking-wider">
+                  Joined
+                </th>
+                <th className="px-6 py-4 font-semibold tracking-wider text-right">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              <AnimatePresence>
+                {filteredTrainers.length > 0 ? (
+                  filteredTrainers.map((trainer, index) => (
+                    <motion.tr
+                      key={trainer.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                      className="hover:bg-white/[0.02] transition-colors group"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#06B6D4] to-[#3B82F6] p-[2px]">
+                            <div className="w-full h-full rounded-full bg-[#0F172A] flex items-center justify-center overflow-hidden relative">
+                              {trainer.image ? (
+                                <Image
+                                  src={trainer.image}
+                                  alt={trainer.name}
+                                  fill
+                                  sizes="40px"
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <User className="w-5 h-5 text-slate-300" />
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="font-medium text-slate-200 group-hover:text-white transition-colors">
+                              {trainer.name}
+                            </div>
+                            <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                              <Mail className="w-3 h-3" />
+                              {trainer.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                          <Dumbbell className="w-3.5 h-3.5" />
+                          Trainer
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${
+                            trainer.status === "blocked"
+                              ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                              : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          }`}
+                        >
+                          {trainer.status === "blocked" ? (
+                            <Ban className="w-3.5 h-3.5" />
+                          ) : (
+                            <Activity className="w-3.5 h-3.5" />
+                          )}
+                          {trainer.status === "blocked" ? "Blocked" : "Active"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-400">
+                        {trainer.createdAt
+                          ? format(new Date(trainer.createdAt), "MMM dd, yyyy")
+                          : "N/A"}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleDemoteToUser(trainer.id)}
+                            disabled={isUpdating === trainer.id}
+                            className="p-2 bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 hover:text-white rounded-lg transition-colors border border-slate-500/20 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
+                            title="Demote to User"
+                          >
+                            <ArrowDownCircle className="w-4 h-4" />
+                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-xs text-white px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap">
+                              Demote to User
+                            </span>
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              handleToggleBlock(trainer.id, trainer.status)
+                            }
+                            disabled={isUpdating === trainer.id}
+                            className={`p-2 rounded-lg transition-colors border disabled:opacity-50 disabled:cursor-not-allowed group/btn relative ${
+                              trainer.status === "blocked"
+                                ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20"
+                                : "bg-red-500/10 text-red-400 hover:bg-red-500/20 border-red-500/20"
+                            }`}
+                            title={
+                              trainer.status === "blocked"
+                                ? "Unblock Trainer"
+                                : "Block Trainer"
+                            }
+                          >
+                            {trainer.status === "blocked" ? (
+                              <CheckCircle className="w-4 h-4" />
+                            ) : (
+                              <Ban className="w-4 h-4" />
+                            )}
+                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-xs text-white px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap">
+                              {trainer.status === "blocked"
+                                ? "Unblock"
+                                : "Block"}
+                            </span>
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))
+                ) : (
+                  <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <td
+                      colSpan={5}
+                      className="px-6 py-12 text-center text-slate-400"
+                    >
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <Search className="w-10 h-10 text-slate-600" />
+                        <p>No trainers found matching your search.</p>
+                      </div>
+                    </td>
+                  </motion.tr>
+                )}
+              </AnimatePresence>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

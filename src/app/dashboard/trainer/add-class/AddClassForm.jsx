@@ -9,6 +9,7 @@ import { useState } from "react";
 import { MdOutlineAddToQueue } from "react-icons/md";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -40,6 +41,8 @@ export default function AddClassForm() {
     },
   });
 
+  const { data: session } = useSession();
+
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
@@ -47,6 +50,11 @@ export default function AddClassForm() {
   };
 
   const onSubmit = async (data) => {
+    if (session?.user?.status === 'blocked') {
+      toast.error("Action restricted by Admin. You are blocked from adding classes.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       if (data.days.size === 0) {

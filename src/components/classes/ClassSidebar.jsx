@@ -35,6 +35,10 @@ export default function ClassSidebar({ singleClass }) {
       router.push("/login");
       return;
     }
+    if (session.user.status === 'blocked') {
+      toast.error("Action restricted by Admin. You are blocked.");
+      return;
+    }
     if (isBooked) {
       toast.error("You have already booked this class");
       return;

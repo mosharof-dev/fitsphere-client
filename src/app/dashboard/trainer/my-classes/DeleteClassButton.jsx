@@ -7,12 +7,18 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 export function DeleteClassButton({ classId }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleDelete = async () => {
+    if (session?.user?.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked from deleting classes.");
+      return;
+    }
     setIsDeleting(true);
     try {
       await deleteClass(classId);

@@ -43,6 +43,11 @@ export default function FavoriteButton({ classData }) {
       return;
     }
 
+    if (session.user.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked.");
+      return;
+    }
+
     if (session.user.role === "trainer") {
       toast.error("Trainers do not have access to favorite classes.");
       return;

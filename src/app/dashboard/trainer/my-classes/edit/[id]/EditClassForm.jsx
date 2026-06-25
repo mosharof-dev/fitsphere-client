@@ -9,6 +9,7 @@ import { useState } from "react";
 import { MdOutlineEditNote } from "react-icons/md";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -16,6 +17,7 @@ export default function EditClassForm({ initialData }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const breadcrumbs = [
     { label: "Dashboard", href: "/dashboard/trainer/overview" },
@@ -48,6 +50,11 @@ export default function EditClassForm({ initialData }) {
   };
 
   const onSubmit = async (data) => {
+    if (session?.user?.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked from editing classes.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       if (data.days.size === 0) {
