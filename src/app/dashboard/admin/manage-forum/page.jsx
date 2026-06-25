@@ -1,19 +1,28 @@
 import PageContainer from "@/components/dashboard/PageContainer";
-import ComingSoon from "@/components/dashboard/ComingSoon";
+import { getAllForumPosts } from "@/lib/actions/forum";
+import ForumManageTable from "./ForumManageTable";
 
-export default function ManageForumPage() {
+export const metadata = {
+  title: "Manage Forum Posts",
+  description: "Moderate community forum posts",
+};
+
+export default async function AdminForumManagePage() {
+  const response = await getAllForumPosts(1, 100);
+  const posts = response?.posts || [];
+
   const breadcrumbs = [
     { label: "Dashboard", href: "/dashboard/admin/overview" },
-    { label: "Manage Forum" }
+    { label: "Manage Forum" },
   ];
 
   return (
-    <PageContainer 
-      title="Manage Forum" 
-      description="Moderate forum posts and discussions."
+    <PageContainer
+      title="Forum Moderation"
+      description="Monitor and manage all community forum posts across the platform."
       breadcrumbs={breadcrumbs}
     >
-      <ComingSoon />
+      <ForumManageTable initialPosts={posts} />
     </PageContainer>
   );
 }

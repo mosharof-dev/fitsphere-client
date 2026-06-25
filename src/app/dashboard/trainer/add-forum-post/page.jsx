@@ -1,19 +1,24 @@
 import PageContainer from "@/components/dashboard/PageContainer";
-import ComingSoon from "@/components/dashboard/ComingSoon";
+import AddForumPostForm from "@/components/forum/AddForumPostForm";
 
-export default function AddForumPostPage() {
+export const metadata = {
+  title: "Add Forum Post",
+  description: "Contribute to the FitSphere Community Forum",
+};
+
+export default function TrainerAddForumPage() {
   const breadcrumbs = [
     { label: "Dashboard", href: "/dashboard/trainer/overview" },
-    { label: "Add Forum Post" }
+    { label: "Add Forum Post" },
   ];
 
   return (
-    <PageContainer 
-      title="Add Forum Post" 
-      description="Create a new post in the community forum."
+    <PageContainer
+      title="Add Forum Post"
+      description="Share your knowledge, tips, and insights with the FitSphere community."
       breadcrumbs={breadcrumbs}
     >
-      <ComingSoon />
+      <AddForumPostForm redirectPath="/dashboard/trainer/my-posts" />
     </PageContainer>
   );
 }
