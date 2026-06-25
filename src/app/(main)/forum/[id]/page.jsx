@@ -5,7 +5,8 @@ import ForumPostContent from "@/components/forum/ForumPostContent";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }) {
-  const post = await getForumPostDetails(params.id);
+  const { id } = await params;
+  const post = await getForumPostDetails(id);
   if (!post) return { title: "Post Not Found" };
   
   return {
@@ -15,6 +16,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ForumPostDetailsPage({ params }) {
+  const { id } = await params;
   const user = await getUserSession();
   
   // Need to be logged in to view post details as per requirements
@@ -22,9 +24,9 @@ export default async function ForumPostDetailsPage({ params }) {
   // but here we can just pass the user session to it.
   
   const [post, comments, initialVote] = await Promise.all([
-    getForumPostDetails(params.id),
-    getComments(params.id),
-    user ? getVoteStatus(params.id) : null,
+    getForumPostDetails(id),
+    getComments(id),
+    user ? getVoteStatus(id) : null,
   ]);
 
   if (!post) {

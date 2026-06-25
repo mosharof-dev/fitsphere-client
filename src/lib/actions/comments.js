@@ -27,7 +27,7 @@ export const addComment = async (postId, text, parentCommentId = null) => {
 export const getComments = async (postId) => {
   try {
     const response = await serverFetch(`/api/comments/${postId}`);
-    return response || [];
+    return Array.isArray(response) ? response : [];
   } catch (error) {
     console.error("Error fetching comments:", error);
     return [];

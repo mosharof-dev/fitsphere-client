@@ -46,10 +46,16 @@ export default function ForumGrid({ posts, currentPage, totalPages }) {
                   <ImageIcon className="w-8 h-8 opacity-50" />
                 </div>
               )}
-              <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                <div className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-[10px] font-bold">
-                  {post.authorName?.charAt(0).toUpperCase()}
-                </div>
+              <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 z-10">
+                {post.authorImage ? (
+                  <div className="relative w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10">
+                    <Image src={post.authorImage} alt={post.authorName || ""} fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-[10px] font-bold shrink-0">
+                    {post.authorName?.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <span className="text-xs font-medium text-white">{post.authorName}</span>
               </div>
             </div>

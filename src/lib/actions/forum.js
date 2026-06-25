@@ -50,6 +50,7 @@ export const getAllForumPosts = async (page = 1, limit = 6) => {
 export const getForumPostDetails = async (id) => {
   try {
     const response = await serverFetch(`/api/forum/${id}`);
+    if (response?.error || !response?._id) return null;
     return response;
   } catch (error) {
     console.error("Error fetching post details:", error);

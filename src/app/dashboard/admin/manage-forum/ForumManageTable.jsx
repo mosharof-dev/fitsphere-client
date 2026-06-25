@@ -99,7 +99,7 @@ export default function ForumManageTable({ initialPosts }) {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <Link 
-                        href={`/community-forum/${post._id}`}
+                        href={`/forum/${post._id}`}
                         target="_blank"
                         className="p-2 bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg transition-colors tooltip-trigger"
                         title="View Post"
@@ -132,7 +132,7 @@ export default function ForumManageTable({ initialPosts }) {
                                 <Button slot="close" variant="flat" className="bg-transparent border-white/10 hover:bg-white/5 text-white">
                                   Cancel
                                 </Button>
-                                <Button slot="close" color="danger" onPress={() => handleDelete(post._id)} className="bg-red-500 hover:bg-red-600 text-white border-0">
+                                <Button slot="close" color="danger" onPress={() => handleDelete(post._id)} onClick={() => handleDelete(post._id)} className="bg-red-500 hover:bg-red-600 text-white border-0">
                                   Delete
                                 </Button>
                               </AlertDialog.Footer>

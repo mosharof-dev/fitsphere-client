@@ -19,12 +19,17 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState(null); // ID of the parent comment
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Edit State
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
 
+  const validComments = Array.isArray(comments) ? comments : [];
   // Filter top-level comments and replies
-  const topLevelComments = comments.filter(c => !c.parentCommentId);
+  const topLevelComments = validComments.filter(c => !c.parentCommentId);
   
   const getReplies = (parentId) => {
-    return comments.filter(c => c.parentCommentId === parentId);
+    return validComments.filter(c => c.parentCommentId === parentId);
   };
 
   if (!currentUser) {
@@ -51,21 +56,27 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
       return;
     }
 
-    if (vote === type) {
-      toast.info(`You have already ${type}d this post.`);
-      return;
-    }
-
-    // Optimistic Update
+    // Toggle case
+    const isToggleOff = vote === type;
     const prevVote = vote;
-    setVote(type);
     
-    if (type === "upvote") {
-      setLikeCount(prev => prev + 1);
-      if (prevVote === "downvote") setDislikeCount(prev => Math.max(0, prev - 1));
+    // Optimistic Update
+    if (isToggleOff) {
+      setVote(null);
+      if (type === "upvote") {
+        setLikeCount(prev => Math.max(0, prev - 1));
+      } else {
+        setDislikeCount(prev => Math.max(0, prev - 1));
+      }
     } else {
-      setDislikeCount(prev => prev + 1);
-      if (prevVote === "upvote") setLikeCount(prev => Math.max(0, prev - 1));
+      setVote(type);
+      if (type === "upvote") {
+        setLikeCount(prev => prev + 1);
+        if (prevVote === "downvote") setDislikeCount(prev => Math.max(0, prev - 1));
+      } else {
+        setDislikeCount(prev => prev + 1);
+        if (prevVote === "upvote") setLikeCount(prev => Math.max(0, prev - 1));
+      }
     }
 
     try {
@@ -73,12 +84,20 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
     } catch (error) {
       // Revert on failure
       setVote(prevVote);
-      if (type === "upvote") {
-        setLikeCount(prev => Math.max(0, prev - 1));
-        if (prevVote === "downvote") setDislikeCount(prev => prev + 1);
+      if (isToggleOff) {
+        if (type === "upvote") {
+          setLikeCount(prev => prev + 1);
+        } else {
+          setDislikeCount(prev => prev + 1);
+        }
       } else {
-        setDislikeCount(prev => Math.max(0, prev - 1));
-        if (prevVote === "upvote") setLikeCount(prev => prev + 1);
+        if (type === "upvote") {
+          setLikeCount(prev => Math.max(0, prev - 1));
+          if (prevVote === "downvote") setDislikeCount(prev => prev + 1);
+        } else {
+          setDislikeCount(prev => Math.max(0, prev - 1));
+          if (prevVote === "upvote") setLikeCount(prev => prev + 1);
+        }
       }
       toast.error(error.message || "Failed to vote");
     }
@@ -106,6 +125,18 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
       toast.error(error.message || "Failed to post comment");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleEditCommentSubmit = async (commentId) => {
+    if (!editCommentText.trim()) return;
+    try {
+      await editComment(commentId, editCommentText);
+      setComments(comments.map(c => c._id === commentId ? { ...c, text: editCommentText } : c));
+      setEditingCommentId(null);
+      toast.success("Comment updated!");
+    } catch (error) {
+      toast.error("Failed to update comment");
     }
   };
 
@@ -139,16 +170,22 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
         <div className="p-6 md:p-10 -mt-20 relative z-10">
           <div className="flex flex-wrap items-center gap-4 mb-6">
             <div className="flex items-center gap-3 bg-[#020617]/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm font-bold">
-                {post.authorName?.charAt(0).toUpperCase()}
-              </div>
+              {post.authorImage ? (
+                <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10">
+                  <Image src={post.authorImage} alt={post.authorName} fill className="object-cover" />
+                </div>
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm font-bold shrink-0">
+                  {post.authorName?.charAt(0).toUpperCase()}
+                </div>
+              )}
               <div>
                 <p className="text-sm font-medium text-white">{post.authorName}</p>
                 <p className="text-xs text-cyan-400 capitalize">{post.authorRole}</p>
               </div>
             </div>
             <span className="text-sm text-slate-400 bg-[#020617]/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              {format(new Date(post.createdAt), 'MMMM dd, yyyy')}
+              {post.createdAt ? format(new Date(post.createdAt), 'MMMM dd, yyyy') : 'Unknown Date'}
             </span>
           </div>
 
@@ -240,30 +277,64 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
             <div key={comment._id} className="space-y-4">
               {/* Main Comment */}
               <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm font-bold shrink-0">
-                  {comment.authorName?.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 bg-[#020617]/50 border border-white/5 rounded-2xl rounded-tl-none p-4 group">
+                {comment.authorImage ? (
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10">
+                    <Image src={comment.authorImage} alt={comment.authorName || ""} fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm font-bold shrink-0">
+                    {comment.authorName?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 bg-[#020617]/50 border border-white/5 rounded-2xl rounded-tl-none p-4 group relative">
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <span className="font-semibold text-white mr-3">{comment.authorName}</span>
                       <span className="text-xs text-slate-500">
-                        {format(new Date(comment.createdAt), 'MMM dd, yyyy h:mm a')}
+                        {comment.createdAt ? format(new Date(comment.createdAt), 'MMM dd, yyyy h:mm a') : ''}
                       </span>
                     </div>
                     {currentUser?.id === comment.authorId && (
-                      <button 
-                        onClick={() => handleDeleteComment(comment._id)}
-                        className="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
-                        title="Delete Comment"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all absolute top-4 right-4 bg-[#020617] px-2 py-1 rounded-lg border border-white/10">
+                        <button 
+                          onClick={() => {
+                            setEditingCommentId(comment._id);
+                            setEditCommentText(comment.text);
+                          }}
+                          className="text-slate-500 hover:text-cyan-400 p-1"
+                          title="Edit Comment"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteComment(comment._id)}
+                          className="text-slate-500 hover:text-red-400 p-1"
+                          title="Delete Comment"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     )}
                   </div>
-                  <p className="text-slate-300 text-sm leading-relaxed mb-3 whitespace-pre-wrap">
-                    {comment.text}
-                  </p>
+                  
+                  {editingCommentId === comment._id ? (
+                    <div className="mb-3 animate-in fade-in zoom-in-95 duration-200">
+                      <textarea
+                        value={editCommentText}
+                        onChange={(e) => setEditCommentText(e.target.value)}
+                        className="w-full bg-[#0B1120] border border-cyan-500/50 rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 resize-y min-h-[80px]"
+                      />
+                      <div className="flex gap-2 justify-end mt-2">
+                        <button onClick={() => setEditingCommentId(null)} className="text-xs text-slate-400 hover:text-white px-3 py-1.5 bg-white/5 rounded-lg transition-colors">Cancel</button>
+                        <button onClick={() => handleEditCommentSubmit(comment._id)} className="text-xs text-white bg-cyan-500 hover:bg-cyan-400 px-4 py-1.5 rounded-lg font-medium transition-colors">Save</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-slate-300 text-sm leading-relaxed mb-3 whitespace-pre-wrap pr-12">
+                      {comment.text}
+                    </p>
+                  )}
+
                   <button 
                     onClick={() => setReplyingTo(comment._id)}
                     className="text-xs font-medium text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1"
@@ -278,30 +349,63 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
                 <div className="pl-14 space-y-4">
                   {getReplies(comment._id).map(reply => (
                     <div key={reply._id} className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold shrink-0">
-                        {reply.authorName?.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1 bg-[#020617]/30 border border-white/5 rounded-2xl rounded-tl-none p-4 group">
+                      {reply.authorImage ? (
+                        <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10">
+                          <Image src={reply.authorImage} alt={reply.authorName || ""} fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold shrink-0">
+                          {reply.authorName?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="flex-1 bg-[#020617]/30 border border-white/5 rounded-2xl rounded-tl-none p-4 group relative">
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <span className="font-semibold text-white text-sm mr-3">{reply.authorName}</span>
                             <span className="text-xs text-slate-500">
-                              {format(new Date(reply.createdAt), 'MMM dd')}
+                              {reply.createdAt ? format(new Date(reply.createdAt), 'MMM dd') : ''}
                             </span>
                           </div>
                           {currentUser?.id === reply.authorId && (
-                            <button 
-                              onClick={() => handleDeleteComment(reply._id)}
-                              className="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
-                              title="Delete Reply"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all absolute top-4 right-4 bg-[#020617] px-2 py-1 rounded-lg border border-white/10">
+                              <button 
+                                onClick={() => {
+                                  setEditingCommentId(reply._id);
+                                  setEditCommentText(reply.text);
+                                }}
+                                className="text-slate-500 hover:text-cyan-400 p-1"
+                                title="Edit Reply"
+                              >
+                                <Edit2 className="w-3 h-3" />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteComment(reply._id)}
+                                className="text-slate-500 hover:text-red-400 p-1"
+                                title="Delete Reply"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
                           )}
                         </div>
-                        <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
-                          {reply.text}
-                        </p>
+
+                        {editingCommentId === reply._id ? (
+                          <div className="mb-1 animate-in fade-in zoom-in-95 duration-200">
+                            <textarea
+                              value={editCommentText}
+                              onChange={(e) => setEditCommentText(e.target.value)}
+                              className="w-full bg-[#0B1120] border border-cyan-500/50 rounded-xl p-3 text-white text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 resize-y min-h-[60px]"
+                            />
+                            <div className="flex gap-2 justify-end mt-2">
+                              <button onClick={() => setEditingCommentId(null)} className="text-xs text-slate-400 hover:text-white px-3 py-1 bg-white/5 rounded-lg transition-colors">Cancel</button>
+                              <button onClick={() => handleEditCommentSubmit(reply._id)} className="text-xs text-white bg-cyan-500 hover:bg-cyan-400 px-3 py-1 rounded-lg font-medium transition-colors">Save</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap pr-12">
+                            {reply.text}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
