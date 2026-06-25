@@ -1,7 +1,7 @@
 "use server";
 
 import { getUserSession } from "../core/session";
-import { serverMutation } from "../core/server";
+import { serverMutation, serverFetch } from "../core/server";
 
 export const createNewClass = async (newClass) => {
   const trainer = await getUserSession();
@@ -59,6 +59,16 @@ export const updateClassStatus = async (id, status) => {
     return response;
   } catch (error) {
     console.error("Error updating class status:", error);
+    throw error;
+  }
+};
+
+export const getFeaturedClasses = async () => {
+  try {
+    const response = await serverFetch("/api/classes/featured");
+    return response;
+  } catch (error) {
+    console.error("Error fetching featured classes:", error);
     throw error;
   }
 };
