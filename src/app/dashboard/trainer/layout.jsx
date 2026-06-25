@@ -8,11 +8,11 @@ export default async function TrainerLayout({ children }) {
   });
 
   if (!session?.user) {
-    redirect("/");
+    redirect("/unauthorized");
   }
 
   if (session.user.role !== "trainer") {
-    redirect(`/dashboard/${session.user.role}/overview`);
+    redirect("/forbidden");
   }
 
   return <>{children}</>;

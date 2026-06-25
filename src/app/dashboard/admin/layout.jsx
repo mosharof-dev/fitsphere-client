@@ -8,11 +8,11 @@ export default async function AdminLayout({ children }) {
   });
 
   if (!session?.user) {
-    redirect("/");
+    redirect("/unauthorized");
   }
 
   if (session.user.role !== "admin") {
-    redirect(`/dashboard/${session.user.role}/overview`);
+    redirect("/forbidden");
   }
 
   return <>{children}</>;
