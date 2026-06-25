@@ -1,9 +1,48 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Calendar, Clock, Timer, Award, Heart } from "lucide-react";
+import { Calendar, Clock, Timer, Award } from "lucide-react";
 import FavoriteButton from "./FavoriteButton";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
+import { checkBooking } from "@/lib/api/bookings";
+import { toast } from "sonner";
 
 export default function ClassSidebar({ singleClass }) {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isBooked, setIsBooked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const checkBookingStatus = async () => {
+      if (session?.user?.email && singleClass?._id) {
+        try {
+          const res = await checkBooking(session.user.email, singleClass._id);
+          setIsBooked(res.isBooked);
+        } catch (error) {
+          console.error("Error checking booking status:", error);
+        }
+      }
+    };
+    checkBookingStatus();
+  }, [session, singleClass]);
+
+  const handleBookNow = () => {
+    if (!session?.user) {
+      toast.error("Please login to book a class");
+      router.push("/login");
+      return;
+    }
+    if (isBooked) {
+      toast.error("You have already booked this class");
+      return;
+    }
+    // Redirect to payment page
+    router.push(`/payment/${singleClass._id}`);
+  };
+
   return (
     <div className="space-y-8">
       <div className="sticky top-8 bg-[#0f172a]/80 backdrop-blur-2xl p-8 rounded-[32px] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)]">
@@ -80,9 +119,19 @@ export default function ClassSidebar({ singleClass }) {
         
         {/* Action Buttons */}
         <div className="flex flex-col gap-4">
-          <button className="w-full py-4 px-6 bg-gradient-to-r from-[#06B6D4] to-[#3B82F6] rounded-xl font-bold text-white text-lg shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
-            Enroll Now
-          </button>
+          {(!session?.user || session.user.role === "user") && (
+            <button 
+              onClick={handleBookNow}
+              disabled={isBooked}
+              className={`w-full py-4 px-6 rounded-xl font-bold text-white text-lg transition-all duration-300 ${
+                isBooked 
+                  ? 'bg-slate-600 cursor-not-allowed opacity-70'
+                  : 'bg-gradient-to-r from-[#06B6D4] to-[#3B82F6] shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:scale-[1.02] active:scale-[0.98]'
+              }`}
+            >
+              {isBooked ? "Already Booked" : "Book Now"}
+            </button>
+          )}
           <FavoriteButton classData={singleClass} />
         </div>
       </div>
