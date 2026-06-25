@@ -47,6 +47,22 @@ export default function ManageUsersClient({ initialUsers }) {
     }
   };
 
+  const handleMakeTrainer = async (userId) => {
+    try {
+      setIsUpdating(userId);
+      await updateUserRole(userId, "trainer");
+      setUsers(
+        users.map((u) => (u.id === userId ? { ...u, role: "trainer" } : u)),
+      );
+      toast.success("User promoted to Trainer successfully");
+    } catch (error) {
+      toast.error("Failed to promote user to trainer");
+      console.error(error);
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
   const handleToggleBlock = async (userId, currentStatus) => {
     try {
       setIsUpdating(userId);
@@ -235,6 +251,20 @@ export default function ManageUsersClient({ initialUsers }) {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          {user.role !== "admin" && user.role !== "trainer" && (
+                            <button
+                              onClick={() => handleMakeTrainer(user.id)}
+                              disabled={isUpdating === user.id}
+                              className="p-2 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 rounded-lg transition-colors border border-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
+                              title="Make Trainer"
+                            >
+                              <Dumbbell className="w-4 h-4" />
+                              <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-xs text-white px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap">
+                                Make Trainer
+                              </span>
+                            </button>
+                          )}
+
                           {user.role !== "admin" && (
                             <button
                               onClick={() => handleMakeAdmin(user.id)}

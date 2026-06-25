@@ -1,19 +1,32 @@
 import PageContainer from "@/components/dashboard/PageContainer";
-import ComingSoon from "@/components/dashboard/ComingSoon";
+import { getAllTrainerApplications } from "@/lib/actions/trainerApplications";
+import AppliedTrainersTable from "./AppliedTrainersTable";
 
-export default function AppliedTrainersPage() {
+export const metadata = {
+  title: "Applied Trainers",
+  description: "Review and approve trainer applications.",
+};
+
+export default async function AppliedTrainersPage() {
   const breadcrumbs = [
     { label: "Dashboard", href: "/dashboard/admin/overview" },
-    { label: "Applied Trainers" }
+    { label: "Applied Trainers" },
   ];
 
+  let applications = [];
+  try {
+    applications = await getAllTrainerApplications() || [];
+  } catch (error) {
+    console.error("Failed to fetch applications:", error);
+  }
+
   return (
-    <PageContainer 
-      title="Applied Trainers" 
+    <PageContainer
+      title="Applied Trainers"
       description="Review and approve trainer applications."
       breadcrumbs={breadcrumbs}
     >
-      <ComingSoon />
+      <AppliedTrainersTable initialApplications={applications} />
     </PageContainer>
   );
 }
