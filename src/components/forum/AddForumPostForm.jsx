@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { createForumPost } from "@/lib/actions/forum";
 import { uploadToImgBB } from "@/lib/actions/image-upload";
 import { PenSquare, ImagePlus, CheckCircle2, AlertCircle } from "lucide-react";
@@ -10,6 +11,7 @@ import Image from "next/image";
 
 export default function AddForumPostForm({ redirectPath }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -46,6 +48,12 @@ export default function AddForumPostForm({ redirectPath }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (session?.user?.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked.");
+      return;
+    }
+
     setLoading(true);
 
     try {

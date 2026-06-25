@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createTrainerApplication } from "@/lib/actions/trainerApplications";
 import { UserPlus, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { MdOutlineAddToQueue } from "react-icons/md";
+import { useSession } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export default function ApplyTrainerContent({ existingApplication }) {
   const router = useRouter();
@@ -126,13 +128,20 @@ export default function ApplyTrainerContent({ existingApplication }) {
     );
   }
 
-  // Application Form UI
+  const { data: session } = useSession();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (session?.user?.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {

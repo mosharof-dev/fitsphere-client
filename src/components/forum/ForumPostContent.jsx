@@ -129,6 +129,10 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
   };
 
   const handleEditCommentSubmit = async (commentId) => {
+    if (currentUser.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked.");
+      return;
+    }
     if (!editCommentText.trim()) return;
     try {
       await editComment(commentId, editCommentText);
@@ -141,6 +145,10 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
   };
 
   const handleDeleteComment = async (commentId) => {
+    if (currentUser.status === "blocked") {
+      toast.error("Action restricted by Admin. You are blocked.");
+      return;
+    }
     try {
       await deleteComment(commentId);
       // Remove the comment and its replies from state
