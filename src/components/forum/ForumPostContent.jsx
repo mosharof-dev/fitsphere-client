@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { ThumbsUp, ThumbsDown, MessageSquare, AlertCircle, Share2, CornerDownRight, Trash2, Edit2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, MessageSquare, AlertCircle, Share2, CornerDownRight, Trash2, Edit2, ArrowLeft, Home } from "lucide-react";
 import { voteForumPost } from "@/lib/actions/forum";
 import { addComment, deleteComment, editComment } from "@/lib/actions/comments";
 import { toast } from "sonner";
@@ -152,60 +152,85 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
-      {/* Main Post Section */}
-      <div className="bg-[#071028] border border-white/5 rounded-[24px] overflow-hidden shadow-2xl">
+    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
+      
+      {/* Top Navigation */}
+      <div className="flex items-center gap-4 mb-8">
+        <button 
+          onClick={() => router.back()} 
+          className="flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-all hover:scale-105 text-sm font-medium text-slate-300 hover:text-white"
+        >
+          <ArrowLeft className="w-4 h-4" /> Go Back
+        </button>
+        <button 
+          onClick={() => router.push("/")}
+          className="flex items-center gap-2 px-5 py-2.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-full border border-cyan-500/20 transition-all hover:scale-105 text-sm font-medium"
+        >
+          <Home className="w-4 h-4" /> Back to Home
+        </button>
+      </div>
+
+      {/* Post Header */}
+      <div className="mb-10 px-2">
+        <div className="flex items-center gap-4 mb-6">
+          {post.authorImage ? (
+            <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-white/10 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+              <Image src={post.authorImage} alt={post.authorName} fill className="object-cover" />
+            </div>
+          ) : (
+            <div className="w-14 h-14 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold shrink-0 border-2 border-cyan-500/30">
+              {post.authorName?.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div>
+            <h3 className="text-xl font-bold text-white mb-1">{post.authorName}</h3>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-cyan-400 capitalize font-medium px-2 py-0.5 bg-cyan-500/10 rounded-md border border-cyan-500/20">{post.authorRole}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+              <span className="text-slate-400">
+                {post.createdAt ? format(new Date(post.createdAt), 'MMMM dd, yyyy') : 'Unknown Date'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+          {post.title}
+        </h1>
+      </div>
+
+      {/* Main Content Card */}
+      <div className="bg-[#071028] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
+        
+        {/* Hero Image */}
         {post.image && (
-          <div className="relative w-full h-[300px] md:h-[400px]">
+          <div className="relative w-full h-[350px] md:h-[500px] border-b border-white/5">
             <Image 
               src={post.image} 
               alt={post.title} 
               fill 
-              className="object-cover"
+              className="object-cover hover:scale-105 transition-transform duration-700"
+              priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#071028] to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#071028] via-transparent to-transparent opacity-90"></div>
           </div>
         )}
-        
-        <div className="p-6 md:p-10 -mt-20 relative z-10">
-          <div className="flex flex-wrap items-center gap-4 mb-6">
-            <div className="flex items-center gap-3 bg-[#020617]/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              {post.authorImage ? (
-                <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/10">
-                  <Image src={post.authorImage} alt={post.authorName} fill className="object-cover" />
-                </div>
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm font-bold shrink-0">
-                  {post.authorName?.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div>
-                <p className="text-sm font-medium text-white">{post.authorName}</p>
-                <p className="text-xs text-cyan-400 capitalize">{post.authorRole}</p>
-              </div>
-            </div>
-            <span className="text-sm text-slate-400 bg-[#020617]/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              {post.createdAt ? format(new Date(post.createdAt), 'MMMM dd, yyyy') : 'Unknown Date'}
-            </span>
-          </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-8 leading-tight">
-            {post.title}
-          </h1>
-
-          <div className="prose prose-invert prose-cyan max-w-none mb-12 text-slate-300 leading-relaxed whitespace-pre-wrap">
+        {/* Text Content & Interaction */}
+        <div className={`p-8 md:p-12 ${post.image ? 'pt-8' : ''}`}>
+          <div className="prose prose-invert prose-cyan max-w-none text-slate-300 text-lg leading-relaxed whitespace-pre-wrap mb-12">
             {post.description}
           </div>
 
           {/* Interaction Bar */}
-          <div className="flex items-center justify-between py-6 border-t border-white/10">
+          <div className="flex flex-wrap items-center justify-between gap-4 py-6 border-t border-white/10">
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => handleVote("upvote")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all ${
                   vote === "upvote" 
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
-                    : "bg-[#020617]/50 text-slate-400 border border-white/5 hover:border-emerald-500/30 hover:text-emerald-400"
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]" 
+                    : "bg-[#020617] text-slate-400 border border-white/10 hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-emerald-500/5"
                 }`}
               >
                 <ThumbsUp className="w-5 h-5" />
@@ -214,10 +239,10 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
               
               <button 
                 onClick={() => handleVote("downvote")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all ${
                   vote === "downvote" 
-                    ? "bg-red-500/20 text-red-400 border border-red-500/30" 
-                    : "bg-[#020617]/50 text-slate-400 border border-white/5 hover:border-red-500/30 hover:text-red-400"
+                    ? "bg-red-500/20 text-red-400 border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)]" 
+                    : "bg-[#020617] text-slate-400 border border-white/10 hover:border-red-500/30 hover:text-red-400 hover:bg-red-500/5"
                 }`}
               >
                 <ThumbsDown className="w-5 h-5" />
@@ -225,9 +250,9 @@ export default function ForumPostContent({ post, initialComments, initialVote, c
               </button>
             </div>
 
-            <button className="flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors">
+            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#020617] text-slate-300 border border-white/10 hover:border-cyan-500/30 hover:text-cyan-400 hover:bg-cyan-500/5 transition-all font-medium">
               <Share2 className="w-5 h-5" />
-              <span className="text-sm font-medium hidden sm:inline">Share</span>
+              <span>Share Post</span>
             </button>
           </div>
         </div>

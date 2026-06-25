@@ -43,9 +43,12 @@ export default function MyPostsList({ initialPosts }) {
           <div className="absolute inset-0 border border-cyan-500/20 rounded-full animate-ping opacity-20"></div>
           <MessageSquare className="w-12 h-12 text-cyan-400" />
         </div>
-        <h3 className="text-3xl font-extrabold text-white mb-3">No posts yet</h3>
+        <h3 className="text-3xl font-extrabold text-white mb-3">
+          No posts yet
+        </h3>
         <p className="text-gray-400 max-w-md mb-10 text-lg">
-          You haven&apos;t created any forum posts yet. Share your knowledge with the community!
+          You haven&apos;t created any forum posts yet. Share your knowledge
+          with the community!
         </p>
         <Link
           href="/dashboard/trainer/add-forum-post"
@@ -59,7 +62,7 @@ export default function MyPostsList({ initialPosts }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col m-4 gap-6">
       {posts.map((post) => (
         <div
           key={post._id}
@@ -69,7 +72,7 @@ export default function MyPostsList({ initialPosts }) {
           <div className="relative h-60 md:h-auto md:w-2/5 lg:w-1/3 overflow-hidden bg-muted shrink-0">
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120]/80 via-transparent to-transparent z-10 md:hidden" />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0B1120] z-10 hidden md:block" />
-            
+
             {post.image ? (
               <Image
                 src={post.image}
@@ -137,32 +140,47 @@ export default function MyPostsList({ initialPosts }) {
                 </Link>
 
                 <AlertDialog>
-                  <button
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 text-gray-300 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold text-sm border border-transparent hover:border-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={deletingId === post._id}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>Delete</span>
-                  </button>
+                  <AlertDialog.Trigger>
+                    <button
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 text-gray-300 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold text-sm border border-transparent hover:border-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={deletingId === post._id}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Delete</span>
+                    </button>
+                  </AlertDialog.Trigger>
                   <AlertDialog.Backdrop>
                     <AlertDialog.Container>
                       <AlertDialog.Dialog className="bg-[#071028] border-white/10 text-white sm:max-w-[400px]">
                         <AlertDialog.CloseTrigger />
                         <AlertDialog.Header>
                           <AlertDialog.Icon status="danger" />
-                          <AlertDialog.Heading>Delete Forum Post?</AlertDialog.Heading>
+                          <AlertDialog.Heading>
+                            Delete Forum Post?
+                          </AlertDialog.Heading>
                         </AlertDialog.Header>
                         <AlertDialog.Body>
                           <p className="text-slate-400">
-                            Are you sure you want to delete &quot;{post.title}&quot;? This action cannot be undone and will remove all
-                            associated comments and votes.
+                            Are you sure you want to delete &quot;{post.title}
+                            &quot;? This action cannot be undone and will remove
+                            all associated comments and votes.
                           </p>
                         </AlertDialog.Body>
                         <AlertDialog.Footer>
-                          <Button slot="close" variant="flat" className="bg-transparent border-white/10 hover:bg-white/5 text-white">
+                          <Button
+                            slot="close"
+                            variant="flat"
+                            className="bg-transparent border-white/10 hover:bg-white/5 text-white"
+                          >
                             Cancel
                           </Button>
-                          <Button slot="close" color="danger" onPress={() => handleDelete(post._id)} onClick={() => handleDelete(post._id)} className="bg-red-500 hover:bg-red-600 text-white border-0">
+                          <Button
+                            slot="close"
+                            color="danger"
+                            onPress={() => handleDelete(post._id)}
+                            onClick={() => handleDelete(post._id)}
+                            className="bg-red-500 hover:bg-red-600 text-white border-0"
+                          >
                             Yes, delete post
                           </Button>
                         </AlertDialog.Footer>

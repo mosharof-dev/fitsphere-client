@@ -103,38 +103,46 @@ export default function ForumGrid({ posts, currentPage, totalPages }) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-8">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-[#071028] border border-white/10 rounded-lg hover:border-cyan-500/50 hover:text-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          
-          <div className="flex items-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`w-10 h-10 rounded-lg font-medium transition-all ${
-                  currentPage === page 
-                    ? "bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)]" 
-                    : "bg-[#071028] border border-white/10 hover:border-cyan-500/50 hover:text-cyan-400"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 mt-8 border-t border-white/10">
+          <div className="text-sm text-slate-400">
+            Showing page <span className="font-medium text-white">{currentPage}</span> of <span className="font-medium text-white">{totalPages}</span>
           </div>
+          
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </button>
+            
+            <div className="flex items-center gap-1 px-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                    currentPage === page 
+                      ? "bg-white/20 text-white" 
+                      : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 bg-[#071028] border border-white/10 rounded-lg hover:border-cyan-500/50 hover:text-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>

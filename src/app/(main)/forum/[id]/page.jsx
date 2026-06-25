@@ -8,7 +8,7 @@ export async function generateMetadata({ params }) {
   const { id } = await params;
   const post = await getForumPostDetails(id);
   if (!post) return { title: "Post Not Found" };
-  
+
   return {
     title: `${post.title} | FitSphere Forum`,
     description: post.description,
@@ -18,11 +18,11 @@ export async function generateMetadata({ params }) {
 export default async function ForumPostDetailsPage({ params }) {
   const { id } = await params;
   const user = await getUserSession();
-  
+
   // Need to be logged in to view post details as per requirements
-  // We'll let the Client Component or Middleware handle strict redirect, 
+  // We'll let the Client Component or Middleware handle strict redirect,
   // but here we can just pass the user session to it.
-  
+
   const [post, comments, initialVote] = await Promise.all([
     getForumPostDetails(id),
     getComments(id),
@@ -34,11 +34,11 @@ export default async function ForumPostDetailsPage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white pt-24 pb-12">
+    <div className=" bg-[#020617] text-white pt-24 pb-12">
       <div className="container mx-auto px-4 md:px-6">
-        <ForumPostContent 
-          post={post} 
-          initialComments={comments} 
+        <ForumPostContent
+          post={post}
+          initialComments={comments}
           initialVote={initialVote}
           currentUser={user}
         />
