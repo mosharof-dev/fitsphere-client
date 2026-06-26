@@ -5,7 +5,7 @@ import { serverMutation, serverFetch } from "../core/server";
 
 export const createForumPost = async (postData) => {
   const user = await getUserSession();
-  
+
   const payload = {
     ...postData,
     authorId: user?.id,
@@ -26,24 +26,26 @@ export const createForumPost = async (postData) => {
 
 export const getMyForumPosts = async () => {
   const user = await getUserSession();
-  if (!user?.id) return [];
+  if (!user?.id) return;
 
   try {
     const response = await serverFetch(`/api/forum/my-posts?userId=${user.id}`);
-    return response || [];
+    return response;
   } catch (error) {
     console.error("Error fetching my forum posts:", error);
-    return [];
+    throw error;
   }
 };
 
 export const getAllForumPosts = async (page = 1, limit = 6) => {
   try {
-    const response = await serverFetch(`/api/forum?page=${page}&limit=${limit}`);
+    const response = await serverFetch(
+      `/api/forum?page=${page}&limit=${limit}`,
+    );
     return response;
   } catch (error) {
     console.error("Error fetching all forum posts:", error);
-    return { posts: [], totalPosts: 0, totalPages: 0, currentPage: 1 };
+    throw error;
   }
 };
 
@@ -54,7 +56,7 @@ export const getForumPostDetails = async (id) => {
     return response;
   } catch (error) {
     console.error("Error fetching post details:", error);
-    return null;
+    throw error;
   }
 };
 
@@ -73,10 +75,14 @@ export const voteForumPost = async (id, type) => {
   if (!user?.id) throw new Error("Unauthorized");
 
   try {
-    const response = await serverMutation(`/api/forum/${id}/vote`, {
-      userId: user.id,
-      type
-    }, "PATCH");
+    const response = await serverMutation(
+      `/api/forum/${id}/vote`,
+      {
+        userId: user.id,
+        type,
+      },
+      "PATCH",
+    );
     return response;
   } catch (error) {
     console.error("Error voting on post:", error);
@@ -89,9 +95,12 @@ export const getVoteStatus = async (id) => {
   if (!user?.id) return null;
 
   try {
-    const response = await serverFetch(`/api/forum/${id}/vote-status?userId=${user.id}`);
+    const response = await serverFetch(
+      `/api/forum/${id}/vote-status?userId=${user.id}`,
+    );
     return response?.vote || null;
   } catch (error) {
-    return null;
+    console.error("Error fetching vote status:", error);
+    throw error;
   }
 };

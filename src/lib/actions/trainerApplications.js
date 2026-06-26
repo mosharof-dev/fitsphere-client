@@ -55,6 +55,6 @@ export const getUserApplication = async (userId) => {
     return response;
   } catch (error) {
     console.error("Error fetching user application:", error);
-    return null;
+    throw error;
   }
 };

@@ -8,6 +8,6 @@ export async function getDashboardStats(role, email) {
     return data;
   } catch (error) {
     console.error("Dashboard stats error:", error);
-    return null;
+    throw error;
   }
 }

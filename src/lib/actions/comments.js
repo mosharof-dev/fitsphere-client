@@ -6,7 +6,7 @@ import { serverMutation, serverFetch } from "../core/server";
 export const addComment = async (postId, text, parentCommentId = null) => {
   const user = await getUserSession();
   if (!user?.id) throw new Error("Unauthorized");
-  
+
   const payload = {
     parentCommentId,
     text,
@@ -27,10 +27,10 @@ export const addComment = async (postId, text, parentCommentId = null) => {
 export const getComments = async (postId) => {
   try {
     const response = await serverFetch(`/api/comments/${postId}`);
-    return Array.isArray(response) ? response : [];
+    return response;
   } catch (error) {
     console.error("Error fetching comments:", error);
-    return [];
+    throw error;
   }
 };
 
@@ -39,10 +39,14 @@ export const editComment = async (commentId, text) => {
   if (!user?.id) throw new Error("Unauthorized");
 
   try {
-    const response = await serverMutation(`/api/comments/${commentId}`, {
-      text,
-      authorId: user.id,
-    }, "PATCH");
+    const response = await serverMutation(
+      `/api/comments/${commentId}`,
+      {
+        text,
+        authorId: user.id,
+      },
+      "PATCH",
+    );
     return response;
   } catch (error) {
     console.error("Error editing comment:", error);
@@ -55,9 +59,13 @@ export const deleteComment = async (commentId) => {
   if (!user?.id) throw new Error("Unauthorized");
 
   try {
-    const response = await serverMutation(`/api/comments/${commentId}`, {
-      authorId: user.id,
-    }, "DELETE");
+    const response = await serverMutation(
+      `/api/comments/${commentId}`,
+      {
+        authorId: user.id,
+      },
+      "DELETE",
+    );
     return response;
   } catch (error) {
     console.error("Error deleting comment:", error);

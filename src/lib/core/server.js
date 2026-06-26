@@ -1,9 +1,12 @@
+import { redirect } from "next/navigation";
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 //  generic server fetch function for fetching data
 export const serverFetch = async (path) => {
   try {
-    const res = await fetch(`${API_URL}${path}`);
+    const res = await fetch(`${API_URL}${path}`, {
+      credentials: "include",
+    });
     return handleStatus(res);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -19,6 +22,7 @@ export const serverMutation = async (path, newData, method = "POST") => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(newData),
     });
 
@@ -32,7 +36,7 @@ export const serverMutation = async (path, newData, method = "POST") => {
 
 const handleStatus = (res) => {
   if (res.status === 401) {
-    redirect("/unauthorized");
+    redirect("/login");
   }
 
   if (res.status === 403) {
