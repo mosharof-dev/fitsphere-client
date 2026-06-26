@@ -18,6 +18,7 @@ export default function ApplyTrainerContent({ existingApplication }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const { data: session } = useSession();
 
   // If user already applied, show the status UI
   if (existingApplication) {
@@ -127,8 +128,6 @@ export default function ApplyTrainerContent({ existingApplication }) {
       </div>
     );
   }
-
-  const { data: session } = useSession();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
