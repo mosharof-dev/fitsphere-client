@@ -11,7 +11,7 @@ export default function TokenProvider() {
       // If user is logged in, but we haven't generated the custom token in this browser session
       if (session?.user?.email && !sessionStorage.getItem("custom_jwt_generated")) {
         try {
-          await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/jwt/sign`, {
+          await fetch(`/api/backend/jwt/sign`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: session.user.email }),
