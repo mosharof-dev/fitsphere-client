@@ -117,7 +117,7 @@ export default async function UserOverviewPage() {
                   expertise with our community!
                 </p>
                 <a
-                  href="/dashboard/user/apply"
+                  href="/dashboard/user/apply-trainer"
                   className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors border border-indigo-500"
                 >
                   Apply Now
@@ -180,9 +180,7 @@ export default async function UserOverviewPage() {
       </div>
 
       {/* Analytics Chart */}
-      {stats && (
-        <UserChart stats={stats} />
-      )}
+      {stats && <UserChart stats={stats} />}
     </PageContainer>
   );
 }
