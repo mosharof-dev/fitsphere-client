@@ -1,6 +1,5 @@
 # 🏋️‍♂️ FitSphere - Fitness & Gym Management Platform (Client)
 
-![FitSphere Banner](https://via.placeholder.com/1200x400?text=FitSphere+-+Fitness+%26+Gym+Management+Platform)
 
 ## 📌 Project Overview
 
