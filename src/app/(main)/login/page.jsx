@@ -39,6 +39,8 @@ const Login = () => {
       toast.error(`Login Failed: ${error.message || "Invalid credentials!"}`);
       console.log("Login Error:", error);
     } else if (data) {
+      // Custom JWT is now generated globally via TokenProvider
+
       toast.success("Welcome back! Login Successful. 🎉");
       router.push("/");
     }

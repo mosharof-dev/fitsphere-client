@@ -29,6 +29,7 @@ export const getComments = async (postId) => {
     const response = await serverFetch(`/api/comments/${postId}`);
     return response;
   } catch (error) {
+    if (error?.message === 'NEXT_REDIRECT') throw error;
     console.error("Error fetching comments:", error);
     throw error;
   }

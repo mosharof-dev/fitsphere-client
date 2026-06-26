@@ -1,17 +1,13 @@
 import React from "react";
 import PageContainer from "@/components/dashboard/PageContainer";
 import TransactionsClient from "@/components/dashboard/TransactionsClient";
+import { getAllBookings } from "@/lib/api/bookings";
 
 // Fetch data on the server
 async function fetchTransactions() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings`, {
-      cache: 'no-store'
-    });
-    if (!res.ok) {
-      return [];
-    }
-    return res.json();
+    const res = await getAllBookings();
+    return res;
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
     return [];

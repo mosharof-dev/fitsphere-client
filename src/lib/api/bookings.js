@@ -1,40 +1,39 @@
+"use server";
+
+import { serverFetch, serverMutation } from "../core/server";
+
 export const checkBooking = async (email, classId) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings/check/${email}/${classId}`);
-  if (!res.ok) {
+  try {
+    const res = await serverFetch(`/api/bookings/check/${email}/${classId}`);
+    return res;
+  } catch (error) {
     throw new Error('Failed to check booking');
   }
-  return res.json();
 };
 
 export const createBooking = async (bookingData) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(bookingData),
-  });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    const error = new Error(errorData.error || 'Failed to create booking');
-    error.status = res.status;
-    throw error;
+  try {
+    const res = await serverMutation(`/api/bookings`, bookingData, "POST");
+    return res;
+  } catch (error) {
+    throw new Error('Failed to create booking');
   }
-  return res.json();
 };
 
 export const getUserBookings = async (email) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings/my-bookings/${email}`);
-  if (!res.ok) {
+  try {
+    const res = await serverFetch(`/api/bookings/my-bookings/${email}`);
+    return res;
+  } catch (error) {
     throw new Error('Failed to fetch user bookings');
   }
-  return res.json();
 };
 
 export const getAllBookings = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings`);
-  if (!res.ok) {
+  try {
+    const res = await serverFetch(`/api/bookings`);
+    return res;
+  } catch (error) {
     throw new Error('Failed to fetch all bookings');
   }
-  return res.json();
 };

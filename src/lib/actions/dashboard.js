@@ -7,6 +7,7 @@ export async function getDashboardStats(role, email) {
     const data = await serverFetch(`/api/dashboard?role=${role}&email=${email}`);
     return data;
   } catch (error) {
+    if (error?.message === 'NEXT_REDIRECT') throw error;
     console.error("Dashboard stats error:", error);
     throw error;
   }

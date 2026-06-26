@@ -32,6 +32,7 @@ export const getMyForumPosts = async () => {
     const response = await serverFetch(`/api/forum/my-posts?userId=${user.id}`);
     return response;
   } catch (error) {
+    if (error?.message === 'NEXT_REDIRECT') throw error;
     console.error("Error fetching my forum posts:", error);
     throw error;
   }
@@ -44,6 +45,7 @@ export const getAllForumPosts = async (page = 1, limit = 6) => {
     );
     return response;
   } catch (error) {
+    if (error?.message === 'NEXT_REDIRECT') throw error;
     console.error("Error fetching all forum posts:", error);
     throw error;
   }
@@ -55,6 +57,7 @@ export const getForumPostDetails = async (id) => {
     if (response?.error || !response?._id) return null;
     return response;
   } catch (error) {
+    if (error?.message === 'NEXT_REDIRECT') throw error;
     console.error("Error fetching post details:", error);
     throw error;
   }
@@ -100,6 +103,7 @@ export const getVoteStatus = async (id) => {
     );
     return response?.vote || null;
   } catch (error) {
+    if (error?.message === 'NEXT_REDIRECT') throw error;
     console.error("Error fetching vote status:", error);
     throw error;
   }

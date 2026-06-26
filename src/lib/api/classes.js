@@ -1,6 +1,8 @@
+"use server";
+
 import { serverFetch } from "../core/server";
 
-export const getAllClasses = (queryParams = "") => {
+export const getAllClasses = async (queryParams = "") => {
   try {
     const endpoint = queryParams
       ? `/api/classes?${queryParams}`
@@ -13,7 +15,7 @@ export const getAllClasses = (queryParams = "") => {
   }
 };
 
-export const getAllAdminClasses = (queryParams = "") => {
+export const getAllAdminClasses = async (queryParams = "") => {
   try {
     const endpoint = queryParams
       ? `/api/classes/all-classes?${queryParams}`
